@@ -22,7 +22,7 @@ Until this whole feature set (in bluefin-dx specifically in my case) matures som
 
 ## Requirements
 
-- [!] Phase 1 - monitor `rpm-ostree status -v` output for new deployments and provide a status area indicator of that fact. When the indicator is clicked some summary of the update will be displayed. This will be a proving ground for the more flexibile implementation in phase 2.
+- [ ] Phase 1 - monitor `rpm-ostree status -v` output for new deployments and provide a status area indicator of that fact. When the indicator is clicked some summary of the update will be displayed. This will be a proving ground for the more flexibile implementation in phase 2.
 
 - [ ] Phase 2 - add configuration for blinking rate and a "rule editor" so that the user can add their own rules based on what they care about.
 
