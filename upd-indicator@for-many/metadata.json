@@ -1,0 +1,8 @@
+{
+  "name": "Update Indicator",
+  "description": "GNOME extension that provides indication that updates are available",
+  "uuid": "upd-indicator@for-many",
+  "shell-version": [
+    "48"
+  ]
+}
