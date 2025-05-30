@@ -1,0 +1,9 @@
+.upd-indicator-icon-normal {
+  color: blue;
+  background-color: transparent;
+}
+
+.upd-indicator-icon-reverse {
+  color: transparent;
+  background-color: blue;
+}
