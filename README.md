@@ -26,6 +26,19 @@ Until this whole feature set (in bluefin-dx specifically in my case) matures som
 
 - [ ] Phase 2 - add configuration for blinking rate and a "rule editor" so that the user can add their own rules based on what they care about.
 
+   The rules will have at least these properties (detailed design TBD):
+   - name
+   - icon
+   - enabled
+   - command to monitor
+   - expected response that means “updates available”
+   - comments to display with the output (might be reminder of the command to run, docs, etc.)
+   
+   The user will have the ability to disable / enable any rule individually. And add their own rules.
+   
+   There will also be a global “Do not disturb” button to disable / re-enable monitoring.
+
+
 ## Approach
 
 GNOME extensions are typically written with GJS - where GJS ironically stands for [JavaScript for GNOME](https://gjs.guide/). While other languages can be used, the Javascript bindings are most common.
