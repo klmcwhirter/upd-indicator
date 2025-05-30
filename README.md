@@ -38,7 +38,7 @@ Until this whole feature set (in bluefin-dx specifically in my case) matures som
    
    There will also be a global “Do not disturb” button to disable / re-enable monitoring.
 
-   The extension should be flexible enough to run on any linux system eith GNOME.
+   The extension should be flexible enough to run on any linux system with GNOME.
 
 
 ## Approach
