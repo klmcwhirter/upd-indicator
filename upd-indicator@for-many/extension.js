@@ -14,7 +14,7 @@ const Indicator = GObject.registerClass(
             super._init(0.0, _('Update Indicator'));
 
             this.add_child(new St.Icon({
-                icon_name: 'software-update-available-symbolic', // update-symbolic
+                icon_name: 'update-symbolic', // software-update-available-symbolic
                 style_class: 'upd-indicator-icon-normal',
             }));
 
