@@ -10,15 +10,17 @@ GNOME extension that provides indication that updates are available
 
 ## Background
 
-There are a few of us using rpm-ostree enabled desktops that are frustrated with the lack of transparency of the update process. And we are not given a way to control the system with regards to the various types of updates that occur.
+Some indication of when various updates need our attention wouild be useful. And not just for OS updates, but various maintenance activities whether related to the local system or not.
 
-In addition, the auto system update process has not worked recently if the system is suspended or off at the time the update needs to run.
+If a command line can be crafted to provide an indication of when an update is available, that should be all that is needed?
 
-And when it does run, the update of things like `distroboxen` creates more troubleshooting issues than it solves.
+Have a favorite web service you monitor? `curl` it!
 
-Ideally we would have system level configuration about which auto-update rules "I" want enabled; and a Do Not Disturb button that disables auto update until "I" re-enable them.
+Tracking a channel on YouTube? If you can write a script to recognize new videos - do it!
 
-Until this whole feature set (in bluefin-dx specifically in my case) matures some more - we (at least) need some indication of when various updates need our attention. Receiving that indication will trigger an activity to plan to reboot or take whatever other action is required for the rules "I" have enabled.
+Have some custom `systemd` units for maintenance? Just send a D-Bus message.
+
+That should be all you need to define a monitoring rule that will cause an indicator to show when there is something that needs your attention.
 
 ## Requirements
 
