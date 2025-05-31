@@ -24,6 +24,13 @@ Until this whole feature set (in bluefin-dx specifically in my case) matures som
 
 - [ ] Phase 1 - monitor `rpm-ostree status -v` output for new deployments and provide a status area indicator of that fact. When the indicator is clicked some summary of the update will be displayed. This will be a proving ground for the more flexibile implementation in phase 2.
 
+TODO - actually monitor `rpm-ostree status` and convert the notification to a dialog displaying a list.
+
+![Phase 1 Demo w/Random hard-coded data](https://github.com/klmcwhirter/stuff/blob/master/upd-indicator-phase1-dummy-data.gif)
+
+I am pretty happy with this rough draft UI, though. Progress is being made.
+
+
 - [ ] Phase 2 - add configuration for blinking rate and a "rule editor" so that the user can add their own rules based on what they care about.
 
    The rules will have at least these properties (detailed design TBD):
@@ -48,6 +55,7 @@ GNOME extensions are typically written with GJS - where GJS ironically stands fo
 ## Status
 
 2025-05-29 I have just created this repo and put up a call to action at [Bluefin - flexible update indicator project](https://universal-blue.discourse.group/t/bluefin-flexible-update-indicator-project/8844).
+2025-05-30 Got a rough draft of the status bar UI completed and captured a demo amimated gif. See above.
 
 ## Reference
 - https://gjs.guide/
