@@ -4,15 +4,18 @@ import Gio from 'gi://Gio';
 import St from 'gi://St';
 
 import { Extension, gettext as _ } from 'resource:///org/gnome/shell/extensions/extension.js';
-import * as PanelMenu from 'resource:///org/gnome/shell/ui/panelMenu.js';
-import * as PopupMenu from 'resource:///org/gnome/shell/ui/popupMenu.js';
+import { Button as PanelMenuButton } from 'resource:///org/gnome/shell/ui/panelMenu.js';
+import { PopupMenuItem } from 'resource:///org/gnome/shell/ui/popupMenu.js';
 
 import * as Main from 'resource:///org/gnome/shell/ui/main.js';
+
+import { IntervalAction } from './interval.js';
+
 
 let _updates_list = [];
 
 const Indicator = GObject.registerClass(
-    class Indicator extends PanelMenu.Button {
+    class Indicator extends PanelMenuButton {
         _blinkStateIsNormal;
 
         _init() {
@@ -27,9 +30,9 @@ const Indicator = GObject.registerClass(
 
             this.add_child(this._indicatorIcon);
 
-            let item = new PopupMenu.PopupMenuItem(_('Show Updates'));
+            let item = new PopupMenuItem(_('Show Updates'));
             item.connect('activate', () => {
-                const subject = _updates_list.length > 0 ? _('Update(s) available') : _('No updates available.');
+                const subject = _updates_list.length > 0 ? _('Update(s) Available') : _('No Updates Available');
                 const msg = _updates_list.length > 0 ? _updates_list.join(", ") : _('Everything is up to date.');
 
                 Main.notify(subject, msg);
@@ -48,70 +51,22 @@ const Indicator = GObject.registerClass(
 
         iconBlink() {
             console.debug(`iconBlink: ${this._blinkStateIsNormal} ==> ${!this._blinkStateIsNormal}`);
+
             this._indicatorIcon.icon_name = this.iconName;
 
             this._blinkStateIsNormal = !this._blinkStateIsNormal;
-
             this._indicatorIcon.style_class = this.iconStateClass;
         }
 
         iconReset() {
             console.debug('iconReset: ');
 
+            this._updates_list = [];
             this._blinkStateIsNormal = false;
             this.iconBlink();
-            this._updates_list = [];
         }
 
     });
-
-class IntervalAction {
-    #interval = null;
-    #logText;
-    #actionFunc;
-    #rate;
-    #rateDesc;
-
-    constructor(logText, actionFunc, rate, rateDesc) {
-        this.#logText = logText;
-        this.#actionFunc = actionFunc;
-        this.#rate = rate;
-        this.#rateDesc = rateDesc;
-    }
-
-    destroy() {
-        if (this.#interval !== null) {
-            clearInterval(this.#interval);
-            this.#interval = null;
-        }
-    }
-
-    get running() {
-        return this.#interval !== null;
-    }
-
-    info() {
-        console.log(`${this.#logText} interval defined with ${this.#rate / 1000} ${this.#rateDesc}`);
-    }
-
-    start() {
-        if (!this.running) {
-            console.log(`${this.#logText} starting interval with ${this.#rate / 1000} ${this.#rateDesc}`);
-
-            this.#actionFunc(); // run 1 time before the delay
-
-            this.#interval = setInterval(this.#actionFunc, this.#rate);
-        }
-    }
-
-    stop() {
-        if (this.running) {
-            console.log(`${this.#logText} stopping interval`);
-            clearInterval(this.#interval);
-            this.#interval = null;
-        }
-    }
-}
 
 const dummyUpdates = [
     'rpm-ostree status',
@@ -139,21 +94,19 @@ function randomChoices(arr, num) {
 function randomRuleAdaper() {
     // Decide whether or not to return updates
     if (Math.random() < 0.5) {
-        _updates_list = [];
-        return false;
+        return [false, []];
     }
 
     const numUpds = Math.floor(Math.random() * dummyUpdates.length);
     const choices = randomChoices(dummyUpdates, numUpds);
     if (choices.length === 0) {
-        _updates_list = [];
-        return false;
+        return [false, []];
     }
-    _updates_list = choices.slice(0, numUpds);  // .join(",\n ");
-    return true;
+
+    return [true, choices.slice(0, numUpds)];
 }
 
-export default class IndicatorExampleExtension extends Extension {
+export default class UpdIndicatorExtension extends Extension {
     #blinkInterval = null;
     #monitorInterval = null;
     #indicator = null;
@@ -165,19 +118,20 @@ export default class IndicatorExampleExtension extends Extension {
     _monitorAction() {
         console.log('upd-indicator - _monitorAction');
 
-        const updatesAvailable = randomRuleAdaper();
+        const [updatesAvailable, updates] = randomRuleAdaper();
+        _updates_list = updates;
 
         if (this.#blinkInterval.running) {
             console.log('upd-indicator - _monitorAction: already blinking ... re-checking updates');
 
             if (!updatesAvailable) {
-                this.#blinkInterval.stop();
+                this.#blinkInterval.disable();
                 this.#indicator.iconReset();
             }
         }
         else if (updatesAvailable) {
             console.log('upd-indicator - _monitorAction: found updates');
-            this.#blinkInterval.start();
+            this.#blinkInterval.enable();
         }
     }
 
@@ -190,7 +144,7 @@ export default class IndicatorExampleExtension extends Extension {
         this.#monitorInterval = new IntervalAction('upd-indicator: monitor - ', this._monitorAction.bind(this), this.monitorRate, 'secs monitor rate');
         this.#monitorInterval.info();
 
-        this.#monitorInterval.start();
+        this.#monitorInterval.enable();
     }
 
     disable() {
