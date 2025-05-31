@@ -9,7 +9,6 @@ import * as PopupMenu from 'resource:///org/gnome/shell/ui/popupMenu.js';
 
 import * as Main from 'resource:///org/gnome/shell/ui/main.js';
 
-const DEFAULT_NOTIF_TEXT = 'Everything is up to date.';
 let _updates_list = [];
 
 const Indicator = GObject.registerClass(
@@ -30,8 +29,8 @@ const Indicator = GObject.registerClass(
 
             let item = new PopupMenu.PopupMenuItem(_('Show Updates'));
             item.connect('activate', () => {
-                const subject = _updates_list.length > 0 ? 'Update(s) available' : 'No updates available.';
-                const msg = _updates_list.length > 0 ? _updates_list.join(", ") : DEFAULT_NOTIF_TEXT;
+                const subject = _updates_list.length > 0 ? _('Update(s) available') : _('No updates available.');
+                const msg = _updates_list.length > 0 ? _updates_list.join(", ") : _('Everything is up to date.');
 
                 Main.notify(subject, msg);
             });
@@ -144,7 +143,7 @@ function randomRuleAdaper() {
         return false;
     }
 
-    const numUpds = Math.floor(Math.random() * (dummyUpdates.length - 1)) + 1;
+    const numUpds = Math.floor(Math.random() * dummyUpdates.length);
     const choices = randomChoices(dummyUpdates, numUpds);
     if (choices.length === 0) {
         _updates_list = [];
