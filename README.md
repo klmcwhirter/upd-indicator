@@ -10,9 +10,11 @@ GNOME extension that provides indication that updates are available
 
 ## Background
 
-Some indication of when various updates need our attention wouild be useful. And not just for OS updates, but various maintenance activities whether related to the local system or not.
+Some indication of when various updates need our attention would be useful. And not just for OS updates, but various maintenance activities whether related to the local system or not.
 
-If a command line can be crafted to provide an indication of when an update is available, that should be all that is needed?
+If a command line can be crafted to provide an indication of when an update is available, that should be all that is needed - right?
+
+Yes it is.
 
 Have a favorite web service you monitor? `curl` it!
 
