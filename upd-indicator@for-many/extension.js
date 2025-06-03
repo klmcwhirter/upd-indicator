@@ -1,6 +1,5 @@
 
 import GObject from 'gi://GObject';
-import Gio from 'gi://Gio';
 import St from 'gi://St';
 
 import { Extension, gettext as _ } from 'resource:///org/gnome/shell/extensions/extension.js';
@@ -10,9 +9,13 @@ import { PopupMenuItem } from 'resource:///org/gnome/shell/ui/popupMenu.js';
 import * as Main from 'resource:///org/gnome/shell/ui/main.js';
 
 import { IntervalAction } from './interval.js';
-
+import { debugLog, infoLog } from './log.js';
+import { MonitorRule } from './monitor.js';
+import { randomRuleAdapter } from './random-rule.js';
 
 let _updates_list = [];
+let _doNotDisturb = false;
+let _dndResolver;
 
 const Indicator = GObject.registerClass(
     class Indicator extends PanelMenuButton {
@@ -30,27 +33,40 @@ const Indicator = GObject.registerClass(
 
             this.add_child(this._indicatorIcon);
 
+
             let item = new PopupMenuItem(_('Show Updates'));
             item.connect('activate', () => {
                 const subject = _updates_list.length > 0 ? _('Update(s) Available') : _('No Updates Available');
-                const msg = _updates_list.length > 0 ? _updates_list.join(", ") : _('Everything is up to date.');
+                const msg = _updates_list.length > 0 ? _updates_list.map((u) => u.name).join(", ") : _('Everything is up to date.');
 
                 Main.notify(subject, msg);
             });
             this.menu.addMenuItem(item);
+
+
+            let dnd = new PopupMenuItem(_('Toggle Do Not Disturb'));
+            dnd.connect('activate', () => {
+                _dndResolver();
+                this.iconReset();
+            });
+            this.menu.addMenuItem(dnd);
+
+            setTimeout(_dndResolver, 1500); // toggle dnd now
         }
 
         get iconName() {
-            return _updates_list.length === 0 ? 'selection-mode-symbolic' : 'software-update-available-symbolic';
+            return _doNotDisturb ? 'system-shutdown-symbolic' :
+                _updates_list.length === 0 ? 'selection-mode-symbolic' : 'software-update-available-symbolic';
         }
 
         get iconStateClass() {
-            return _updates_list.length === 0 ? 'upd-indicator-icon-green' :
-                this._blinkStateIsNormal ? 'upd-indicator-icon-normal' : 'upd-indicator-icon-blink';
+            return _doNotDisturb ? 'upd-indicator-icon-normal' :
+                _updates_list.length === 0 ? 'upd-indicator-icon-green' :
+                    this._blinkStateIsNormal ? 'upd-indicator-icon-normal' : 'upd-indicator-icon-blink';
         }
 
         iconBlink() {
-            console.debug(`iconBlink: ${this._blinkStateIsNormal} ==> ${!this._blinkStateIsNormal}`);
+            debugLog(`iconBlink: _blinkStateIsNormal=${this._blinkStateIsNormal}`);
 
             this._indicatorIcon.icon_name = this.iconName;
 
@@ -59,70 +75,89 @@ const Indicator = GObject.registerClass(
         }
 
         iconReset() {
-            console.debug('iconReset: ');
+            debugLog('iconReset: ');
 
-            this._updates_list = [];
-            this._blinkStateIsNormal = false;
+            _updates_list = [];
+            this._blinkStateIsNormal = true;
             this.iconBlink();
         }
 
     });
 
-const dummyUpdates = [
-    'rpm-ostree status',
-    'ublue-os url',
-    'cpython#3.15',
-    'brew',
-    'sympy',
-    'flatpak',
-    'errors in dmesg'
-];
-
-function randomChoices(arr, num) {
-    const rc = [];
-    while (rc.length < num) {
-        const potential = arr[Math.floor(Math.random() * num)];
-        if (rc.includes(potential)) {
-            continue;
-        }
-
-        rc.push(potential);
-    }
-    return rc;
-}
-
-function randomRuleAdaper() {
-    // Decide whether or not to return updates
-    if (Math.random() < 0.5) {
-        return [false, []];
-    }
-
-    const numUpds = Math.floor(Math.random() * dummyUpdates.length);
-    const choices = randomChoices(dummyUpdates, numUpds);
-    if (choices.length === 0) {
-        return [false, []];
-    }
-
-    return [true, choices.slice(0, numUpds)];
-}
-
 export default class UpdIndicatorExtension extends Extension {
     #blinkInterval = null;
     #monitorInterval = null;
     #indicator = null;
+    #displayName;
+
+    // "settings-schema": "org.gnome.shell.extensions.upd-indicator"
 
     get blinkRate() { return 5000 /* ms */; }
 
     get monitorRate() { return 15000 /* ms */; }
 
-    _monitorAction() {
-        console.log('upd-indicator - _monitorAction');
+    get enabledRules() {
+        return this.rules.filter((rule) => rule.enabled);
+    }
 
-        const [updatesAvailable, updates] = randomRuleAdaper();
-        _updates_list = updates;
+    get rules() {
+        return [
+            // TODO - these will come from prefs
+            new MonitorRule({
+                name: 'random',
+                description: 'random number of hard-coded strings',
+                enabled: true,
+                command: '@random',
+                extraInfo: 'Some updates to check out'
+            })
+        ];
+    }
+
+    get ruleMonitor() { return randomRuleAdapter; }
+
+    _reset_dnd(indicator) {
+        if (_doNotDisturb) {
+            this.#blinkInterval.disable();
+            this.#monitorInterval.disable();
+        } else {
+            if (!(this.#blinkInterval instanceof IntervalAction)) {
+                this.#blinkInterval = new IntervalAction({
+                    logText: `${this.#displayName}: blink - `,
+                    actionFunc: indicator.iconBlink.bind(indicator),
+                    rate: this.blinkRate,
+                    rateDesc: 'secs blink rate',
+                });
+            }
+            this.#blinkInterval.info();
+
+            if (!(this.#monitorInterval instanceof IntervalAction)) {
+                this.#monitorInterval = new IntervalAction({
+                    logText: `${this.#displayName}: monitor - `,
+                    actionFunc: this._monitorAction.bind(this),
+                    rate: this.monitorRate,
+                    rateDesc: 'secs monitor rate',
+                });
+            }
+            this.#monitorInterval.info();
+
+            this.#monitorInterval.enable();
+        }
+    }
+
+    _toggle_do_not_disturb() {
+        debugLog(`${this.#displayName} - _toggle_do_not_disturb`);
+        _doNotDisturb = !_doNotDisturb;
+        this._reset_dnd(this.#indicator);
+    }
+
+    async _monitorAction() {
+        debugLog(`${this.#displayName} - _monitorAction`);
+
+        const [updatesAvailable, updates] = await this.ruleMonitor(this.enabledRules);
+        _updates_list = [...updates];
 
         if (this.#blinkInterval.running) {
-            console.log('upd-indicator - _monitorAction: already blinking ... re-checking updates');
+            debugLog(`${this.#displayName} - _monitorAction: already blinking ... re-checking updates`);
 
             if (!updatesAvailable) {
                 this.#blinkInterval.disable();
@@ -130,29 +165,36 @@ export default class UpdIndicatorExtension extends Extension {
             }
         }
         else if (updatesAvailable) {
-            console.log('upd-indicator - _monitorAction: found updates');
+            debugLog(`${this.#displayName} - _monitorAction: found updates`);
+            this.#indicator._blinkStateIsNormal = true;
             this.#blinkInterval.enable();
         }
     }
 
     enable() {
+        this.#displayName = this.metadata.uuid.split('@')[0];
+        _doNotDisturb = true; // while starting
+        _dndResolver = this._toggle_do_not_disturb.bind(this);
+
+        infoLog(`${this.#displayName} is starting ...`);
+
         this.#indicator = new Indicator();
+        this.#indicator._blinkStateIsNormal = true;
         Main.panel.addToStatusArea(this.uuid, this.#indicator);
 
-        this.#blinkInterval = new IntervalAction('upd-indicator: blink - ', this.#indicator.iconBlink.bind(this.#indicator), this.blinkRate, 'secs blink rate');
-        this.#blinkInterval.info();
-        this.#monitorInterval = new IntervalAction('upd-indicator: monitor - ', this._monitorAction.bind(this), this.monitorRate, 'secs monitor rate');
-        this.#monitorInterval.info();
-
-        this.#monitorInterval.enable();
+        infoLog(`${this.#displayName} is starting ... done.`);
     }
 
     disable() {
+        infoLog(`${this.#displayName} is stopping ...`);
+
         this.#monitorInterval.destroy();
         this.#blinkInterval.destroy();
 
         this.#indicator.iconReset();
         this.#indicator.destroy();
         this.#indicator = null;
+
+        infoLog(`${this.#displayName} is stopping ... done.`);
     }
 }
