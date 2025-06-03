@@ -22,3 +22,9 @@ if git status --branch -s --ahead-behind | grep behind >/dev/null 2>&1;then echo
 git switch -
 
 ```
+
+### Reference
+- https://gjs.guide/extensions/topics/extension.html
+- https://gitlab.gnome.org/GNOME/gnome-shell/-/blob/main/docs/building-and-running.md
+- https://gjs.guide/guides/gio/list-models.html#basic-implementation
+- https://dbus.freedesktop.org/doc/dbus-specification.html#basic-types
