@@ -1,0 +1,58 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/ubuntu
+{
+	"name": "upd-indicator",
+	// See https://github.com/klmcwhirter/oci-shared-images for how this image is constructed
+	"image": "fedora-python-dx:latest",
+	"runArgs": [
+		"--name",
+		"upd-indicator"
+	],
+	"containerEnv": {
+		"HOME": "/var/home/klmcw",
+		"TZ": "PST8PDT",
+		"USER": "klmcw"
+	},
+	"mounts": [
+		{
+			"source": "/var/home/klmcw",
+			"target": "/var/home/klmcw",
+			"type": "bind"
+		}
+	],
+	// Features to add to the dev container. More info: https://containers.dev/features.
+	"features": {},
+	// Use 'forwardPorts' to make a list of ports inside the container available locally.
+	"forwardPorts": [],
+	"onCreateCommand": {
+		"start time": "date",
+		"install pnpm": ".devcontainer/vsc-install-pnpm.sh"
+	},
+	// Use 'postCreateCommand' to run commands after the container is created.
+	"postCreateCommand": {
+		"pwd": "pwd",
+		"uname": "uname -a",
+		"node version": "node --version",
+		"pnpm version": "source ~/.bashrc && pnpm --version"
+	},
+	// Use 'postStartCommand' to run commands after the container is created.
+	"postStartCommand": {
+		"end time": "date"
+	},
+	// Configure tool-specific properties.
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"dbaeumer.vscode-eslint",
+				"streetsidesoftware.code-spell-checker"
+			],
+			"settings": {
+				"terminal.integrated.defaultProfile.linux": "bash"
+			}
+		}
+	},
+	"remoteEnv": {
+		"HOSTNAME": "upd-indicator"
+	},
+	"remoteUser": "klmcw"
+}
