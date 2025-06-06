@@ -94,6 +94,7 @@ GNOME extensions are typically written with GJS - where GJS ironically stands fo
 2025-05-29 I have just created this repo and put up a call to action at [Bluefin - flexible update indicator project](https://universal-blue.discourse.group/t/bluefin-flexible-update-indicator-project/8844).
 2025-05-30 Got a rough draft of the status bar UI completed and captured a demo amimated gif. See above.
 2025-06-05 The summary display is working; although notification is _possible_ it is not clear how to do that. It is disabled for now.
+2025-06-06 Added devcontainer definition - cannot perform `pnpm run nested` in the devcontainer - run it on the host instead !
 
 ## Reference
 - https://gjs.guide/
