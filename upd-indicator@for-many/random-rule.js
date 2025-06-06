@@ -1,13 +1,15 @@
 import { debugLog } from './log.js';
+import { UpdateItem } from './update-item.js';
 
 const dummyUpdates = [
-    { name: 'rpm-ostree status', status: 'rc != 77' },
-    { name: 'cpython#3.14', status: 'behind' },
-    { name: 'cpython#main', status: 'behind' },
-    { name: 'brew', status: 'outdated' },
-    { name: 'sympy', status: 'behind' },
-    { name: 'flatpak remote-ls', status: 'updates' },
-    { name: 'errors in dmesg', status: 'new' },
+    new UpdateItem({ name: 'rpm-ostree status', status: 'rc != 77' }),
+    new UpdateItem({ name: 'cpython#3.14', status: 'behind' }),
+    new UpdateItem({ name: 'errors in dmesg', status: 'new', extra: 'pkexec and long string that will need to wrap to see how that works' }),
+    new UpdateItem({ name: 'cpython#main', status: 'behind' }),
+    new UpdateItem({ name: 'brew', status: 'outdated' }),
+    new UpdateItem({ name: 'sympy', status: 'behind' }),
+    new UpdateItem({ name: 'flatpak remote-ls', status: 'updates' }),
+    new UpdateItem({ name: 'errors in dmesg', status: 'new', extra: 'pkexec' }),
 ];
 
 function randomChoices(arr, num) {
@@ -25,7 +27,7 @@ function randomChoices(arr, num) {
 
 export const RANDOMRULEADAPTER_COMMAND = '@random';
 
-export async function randomRuleAdapter(rules) {
+export function randomRuleAdapter(rules) {
     const enabled = rules.filter((rule) => rule.enabled && rule.command.includes(RANDOMRULEADAPTER_COMMAND));
 
     if (enabled.length === 0) {
