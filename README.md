@@ -81,7 +81,7 @@ Steps:
 
 You will begin to see the UI change in the nested session and the log output in the outer current session
 
-To shutdown, do `pnpm run disable` in the nested session, log out of the nested session and close the window.
+To shutdown, do `pnpm run disable` in the nested session, and close the window.
 
 You should be back where you started and ready to launch again.
 
@@ -98,4 +98,6 @@ GNOME extensions are typically written with GJS - where GJS ironically stands fo
 
 ## Reference
 - https://gjs.guide/
+- https://gjs.guide/guides/gio/subprocesses.html
+- https://gjs.guide/guides/gjs/asynchronous-programming.html
 - https://gjs-docs.gnome.org/

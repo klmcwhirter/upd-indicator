@@ -1,22 +1,42 @@
+import GLib from 'gi://GLib';
+import Gio from 'gi://Gio';
 
 import { EventEmitter } from 'resource:///org/gnome/shell/misc/signals.js';
+import { CompositeRuleAdapter } from './composite-adapter.js';
 import { IntervalAction } from './interval.js';
 import { debugLog } from './log.js';
-import { randomRuleAdapter } from './random-rule.js';
+import { pollingRuleAdapter, pollingRuleAdapterCanProcess } from './polling-adapter.js';
+import { randomRuleAdapter, randomRuleAdapterCanProcess } from './random-adapter.js';
 
 export class MonitorRule {
     name;
     description;
     enabled;
     command;
-    extraInfo;
+    notErrorCode;
 
-    constructor({ name, description, enabled, command, extraInfo }) {
+    constructor({ name, description, enabled, command, notErrorCode }) {
         this.name = name;
         this.description = description;
         this.enabled = enabled;
         this.command = command;
-        this.extraInfo = extraInfo;
+        this.notErrorCode = notErrorCode;
+    }
+
+
+    /**
+     * Parse the command for a @rule and return the array @argv
+     * for use by execCommunicate.
+     *
+     * @param {MonitorRule} this - the rule being processed
+     * @returns {string[]} - the argv array
+     */
+    parseCommand() {
+        debugLog('parseCommand: rule.name=', this.name, 'rule.command=', this.command);
+        // This function may throw an error
+        const [, argv] = GLib.shell_parse_argv(this.command);
+        debugLog('parseCommand: argv=', argv);
+        return argv;
     }
 
     /* TODO: save prefs */
@@ -37,11 +57,22 @@ export class UpdatesMonitor extends EventEmitter {
 
         this.doNotDisturb = ctx.doNotDisturbAtStart;
 
+        this.cancellable = new Gio.Cancellable();
+
+        this.ruleAdapter = new CompositeRuleAdapter({
+            adapters: [pollingRuleAdapter, randomRuleAdapter],
+            predicates: [pollingRuleAdapterCanProcess, randomRuleAdapterCanProcess]
+        });
+
         this.updatesList = []; // do not emit change
         this._reset_dnd();
     }
 
     destroy() {
+        if (this.cancellable && !this.cancellable.is_cancelled()) {
+            this.cancellable.cancel();
+        }
+
         if (this.monitorInterval instanceof IntervalAction) {
             this.monitorInterval.destroy();
             delete this.monitorInterval;
@@ -69,18 +100,18 @@ export class UpdatesMonitor extends EventEmitter {
     _monitorAction() {
         debugLog(`${this.displayName} - _monitorAction`);
 
-        const [updatesAvailable, updates] = randomRuleAdapter(this.rules);
+        const updates = this.ruleAdapter.run(this.rules, this.cancellable);
         this.setUpdates(updates);
 
         if (this.blinkInterval.running) {
             debugLog(`${this.displayName} - _monitorAction: already blinking ... re-checking updates`);
 
-            if (!updatesAvailable) {
+            if (updates.length === 0) {
                 this.blinkInterval.disable();
                 this.emit('icon-reset');
             }
         }
-        else if (updatesAvailable) {
+        else if (updates.length > 0) {
             debugLog(`${this.displayName} - _monitorAction: found updates`);
             this.blinkInterval.enable();
         }
