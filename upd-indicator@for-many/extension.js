@@ -13,28 +13,35 @@ import { debugLog, errorLog, infoLog } from './log.js';
 import { MonitorRule, UpdatesMonitor } from './monitor.js';
 import { UpdateItem } from './update-item.js';
 
+function colorStyle(colors, colorKey) {
+    const extra = colorKey === 'menu-item-name' ? 'font-weight: bold;' : '';
+    return `color: ${colors[colorKey]};${extra}`;
+}
 
 class UpdatesMenuItem extends PopupMenu.PopupBaseMenuItem {
     static {
         GObject.registerClass(this);
     }
 
-    constructor(update) {
+    constructor(update, colors) {
         super(update.name, {
             activate: false,
             // reactive: false,
             can_focus: false,
             style_class: 'popup-menu-item',
-            update: update
+            update: update,
+            colors: colors
         });
         // this.sensitive = false;
     }
 
     _init(_text, params) {
-        debugLog('params=', params);
+        debugLog('UpdatesMenuItem._init: params=', params);
 
         const update = params.update;
         delete params.update;
+        const colors = params.colors;
+        delete params.colors;
 
         super._init(params);
 
@@ -42,8 +49,8 @@ class UpdatesMenuItem extends PopupMenu.PopupBaseMenuItem {
             orientation: Clutter.Orientation.HORIZONTAL
         });
 
-        const prop_classes = [['name', 'upd-indicator-menu-item-name'], ['status', 'upd-indicator-menu-item-status'], ['extra', 'upd-indicator-menu-item-extra']]
-        prop_classes.forEach(([prop, cls]) => {
+        const props = ['name', 'status', 'extra']
+        props.forEach((prop) => {
             if (prop in update && update[prop] !== null && update[prop] !== undefined) {
                 let label = new St.Label({
                     text: update[prop],
@@ -54,7 +61,7 @@ class UpdatesMenuItem extends PopupMenu.PopupBaseMenuItem {
                     margin_left: 3,
                     margin_right: 3,
                     width: 200,
-                    style_class: cls
+                    style: colorStyle(colors, `menu-item-${prop}`)
                 });
                 label.clutter_text.set_line_wrap(true);
                 this.box.add_child(label);
@@ -104,22 +111,23 @@ class UpdatesMenu extends PanelMenu.Button {
         super.destroy();
     }
 
-    get dndColor() {
-        return this.doNotDisturb ? 'red' : 'white';
+    get dndColorKey() {
+        return this.doNotDisturb ? 'dnd-label-on' : 'dnd-label-off';
     }
 
     get iconName() {
         return this.monitor.updatesEmpty() ? this.ctx.icons['green'] : this.ctx.icons['updates'];
     }
 
-    get iconStyleColor() {
-        const colors = this.ctx.colors;
-        return this.doNotDisturb ? colors['dnd'] :
-            this.monitor.updatesEmpty() ? colors['green'] :
-                this.blinkStateIsNormal ? colors['normal'] : colors['blink'];
+    get iconStyleColorKey() {
+        return this.doNotDisturb ? 'dnd' :
+            this.monitor.updatesEmpty() ? 'green' :
+                this.blinkStateIsNormal ? 'normal' : 'blink';
     }
 
     _create() {
+        this.indicatorIcon.icon_name = this.iconName;
+
         this.dnd = new PopupMenu.PopupMenuItem(this.ctx.text['toggle-dnd']);
         this.dnd.connect('activate', () => {
             this.monitor.toggleDoNotDisturb();
@@ -130,10 +138,11 @@ class UpdatesMenu extends PanelMenu.Button {
         this.menu.addMenuItem(new PopupMenu.PopupSeparatorMenuItem());
 
         const updatesList = this.monitor.updates();
+        debugLog('UpdatesMenu._create: updatesList=', updatesList);
 
         if (updatesList.length > 0) {
             updatesList.forEach((u) => {
-                const updateItem = new UpdatesMenuItem(u);
+                const updateItem = new UpdatesMenuItem(u, this.ctx.colors);
                 this.menu.addMenuItem(updateItem);
             });
         } else {
@@ -141,10 +150,13 @@ class UpdatesMenu extends PanelMenu.Button {
                 new UpdateItem({
                     name: this.ctx.text['no-upd-avail'],
                     status: this.ctx.text['no-upd-status']
-                })
+                }),
+                this.ctx.colors
             );
             this.menu.addMenuItem(updateItem);
         }
+
+        this._setColors();
     }
 
     _rebuildDisplay() {
@@ -153,9 +165,10 @@ class UpdatesMenu extends PanelMenu.Button {
     }
 
     _setColors() {
-        const bold = this.doNotDisturb ? 'font-weight: bolder;' : '';
-        this.dnd.label.style = `color: ${this.dndColor};${bold}`;
-        this.indicatorIcon.style = `color: ${this.iconStyleColor};`;
+        const colors = this.ctx.colors;
+        const extra = 'font-weight: bold;';
+        this.dnd.label.style = `${colorStyle(colors, this.dndColorKey)}${extra}`;
+        this.indicatorIcon.style = colorStyle(colors, this.iconStyleColorKey);
     }
 
     iconBlink() {
@@ -163,6 +176,7 @@ class UpdatesMenu extends PanelMenu.Button {
         this.blinkStateIsNormal = !this.blinkStateIsNormal;
 
         this.indicatorIcon.icon_name = this.iconName;
+
         this._setColors();
     }
 
@@ -190,6 +204,7 @@ export default class UpdIndicatorExtension extends Extension {
             // "settings-schema": "org.gnome.shell.extensions.upd-indicator"
 
             displayName: this.displayName,
+            monitor: null,
 
             icons: {
                 'green': 'selection-mode-symbolic',
@@ -199,7 +214,12 @@ export default class UpdIndicatorExtension extends Extension {
                 'green': 'lightgreen',
                 'normal': 'white',
                 'blink': 'cornflowerblue',
-                'dnd': 'gray'
+                'dnd': 'gray',
+                'dnd-label-on': 'red',
+                'dnd-label-off': 'white',
+                'menu-item-name': 'lightgray',
+                'menu-item-status': 'aquamarine',
+                'menu-item-extra': 'cornflowerblue'
             },
             text: {
                 'no-upd-avail': 'No Updates Available',
@@ -211,14 +231,20 @@ export default class UpdIndicatorExtension extends Extension {
             blinkRate: 5000 /* ms */,
             monitorRate: 15000 /* ms */,
 
-            monitor: null,
             rules: [
                 new MonitorRule({
                     name: 'random',
                     description: 'random number of hard-coded strings',
                     enabled: true,
                     command: '@random',
-                    extraInfo: 'Some updates to check out'
+                    notErrorCode: 0
+                }),
+                new MonitorRule({
+                    name: 'cpython fork behind',
+                    description: 'check if there are missing commits in my cpython fork',
+                    enabled: true,
+                    command: 'cpython-clone-behind.sh',
+                    notErrorCode: 0
                 })
             ]
         }

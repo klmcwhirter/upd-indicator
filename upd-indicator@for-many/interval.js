@@ -30,8 +30,6 @@ export class IntervalAction {
         if (!this.running) {
             infoLog(`${this.#logText} starting interval with ${this.#rate / 1000} ${this.#rateDesc}`);
 
-            this.#actionFunc(); // run 1 time before the delay
-
             this.#interval = setInterval(this.#actionFunc, this.#rate);
         }
     }
