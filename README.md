@@ -110,7 +110,7 @@ GNOME extensions are written with GJS - where GJS ironically stands for [JavaScr
 
 |Link|Description|
 | --- | --- |
-|[![phase 1 demo thumbnail](./examples/phase1-demo/upd-indicator-example-rules-thumbnail.png)](./examples/phase1-demo/phase1-demo.md)|shows rule definitions, the steps I take to resolve each item and shows each dropping off the list as they are updated|
+|[![phase 1 example demo thumbnail](./examples/phase1-demo/upd-indicator-example-rules-thumbnail.png)](./examples/phase1-demo/README.md)|shows rule definitions, the steps I take to resolve each item and shows each dropping off the list as they are updated|
 
 ## Reference
 - https://gjs.guide/
