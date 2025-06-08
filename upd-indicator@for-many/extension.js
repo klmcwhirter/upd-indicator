@@ -235,8 +235,15 @@ export default class UpdIndicatorExtension extends Extension {
                 new MonitorRule({
                     name: 'random',
                     description: 'random number of hard-coded strings',
-                    enabled: true,
+                    enabled: false,
                     command: '@random',
+                    notErrorCode: 0
+                }),
+                new MonitorRule({
+                    name: 'bluefin',
+                    description: 'check if there are updates to bluefin via rpm-ostree',
+                    enabled: true,
+                    command: 'rpm-ostree-update-check.sh',
                     notErrorCode: 0
                 }),
                 new MonitorRule({
@@ -247,10 +254,10 @@ export default class UpdIndicatorExtension extends Extension {
                     notErrorCode: 0
                 }),
                 new MonitorRule({
-                    name: 'bluefin',
-                    description: 'check if there are updates to bluefin via rpm-ostree',
+                    name: 'fedora-python-dx',
+                    description: 'check if there are updates to fedora-python-dx',
                     enabled: true,
-                    command: 'rpm-ostree-update-check.sh',
+                    command: 'fedora-python-dx-has-updates.sh',
                     notErrorCode: 0
                 })
             ]

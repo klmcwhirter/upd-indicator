@@ -57,8 +57,8 @@ function execRuleCommand(rule, input = null, cancellable = null) {
         }
 
         debugLog(msg);
-
-        return UpdateItem.arrayFromString(stdout.trim());
+        const objsIn = stdout.trim();
+        return objsIn ? UpdateItem.arrayFromString(objsIn) : [];
     } finally {
         if (cancelId > 0) {
             cancellable.disconnect(cancelId);
