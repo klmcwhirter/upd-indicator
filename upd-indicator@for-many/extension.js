@@ -245,6 +245,13 @@ export default class UpdIndicatorExtension extends Extension {
                     enabled: true,
                     command: 'cpython-clone-behind.sh',
                     notErrorCode: 0
+                }),
+                new MonitorRule({
+                    name: 'bluefin',
+                    description: 'check if there are updates to bluefin via rpm-ostree',
+                    enabled: true,
+                    command: 'rpm-ostree-update-check.sh',
+                    notErrorCode: 0
                 })
             ]
         }

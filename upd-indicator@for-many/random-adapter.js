@@ -2,7 +2,7 @@ import { debugLog } from './log.js';
 import { UpdateItem } from './update-item.js';
 
 const dummyUpdates = [
-    new UpdateItem({ name: 'rpm-ostree status', status: 'rc != 77' }),
+    // new UpdateItem({ name: 'rpm-ostree status', status: 'rc != 77' }),
     // new UpdateItem({ name: 'cpython#3.14', status: 'behind' }),
     new UpdateItem({ name: 'errors in dmesg', status: 'new', extra: 'pkexec and long string that will need to wrap to see how that works' }),
     // new UpdateItem({ name: 'cpython#main', status: 'behind' }),
