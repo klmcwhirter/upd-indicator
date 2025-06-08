@@ -98,6 +98,12 @@ GNOME extensions are written with GJS - where GJS ironically stands for [JavaScr
 2025-06-06 Added devcontainer definition - cannot perform `pnpm run nested` in the devcontainer - run it on the host instead !
 2025-06-07 Added pollingRuleAdapter and CompositeRuleAdapter class - completed phase 1 !
 
+## Examples
+
+|Link|Description|
+| --- | --- |
+|[![phase 1 demo thumbnail](./examples/phase1-demo/upd-indicator-example-rules-thumbnail.png)](./examples/phase1-demo/phase1-demo.md)|shows rule definitions, the steps I take to resolve each item and shows each dropping off the list as they are updated|
+
 ## Reference
 - https://gjs.guide/
 - https://gjs.guide/guides/gio/subprocesses.html
