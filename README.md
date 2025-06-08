@@ -36,11 +36,11 @@ That should be all you need to define a monitoring rule that will cause an indic
    
 This will be a proving ground for the more flexibile implementation in phase 2.
 
-TODO - monitor `cpython-clone-behind.sh`
+Status: 👍
 
-![Phase 1 Demo w/Random hard-coded data](https://github.com/klmcwhirter/stuff/blob/master/upd-indicator-phase1-dummy-data.gif)
+![Phase 1 Demo](https://github.com/klmcwhirter/stuff/blob/master/upd-indicator-phase1-dummy-data.gif)
 
-I am pretty happy with this rough draft UI, though. Progress is being made.
+I am pretty happy with this rough draft UI, though. Time to move to phase 2.
 
 
 - Phase 2 - add configuration for blinking rate and a "rule editor" so that the user can add their own rules based on what they care about.
@@ -57,6 +57,7 @@ I am pretty happy with this rough draft UI, though. Progress is being made.
    
    The extension should be flexible enough to run on any linux system with GNOME.
 
+Status: design
 
 ## Running the Prototype
 
@@ -87,7 +88,7 @@ You should be back where you started and ready to launch again.
 
 ## Approach
 
-GNOME extensions are typically written with GJS - where GJS ironically stands for [JavaScript for GNOME](https://gjs.guide/).
+GNOME extensions are written with GJS - where GJS ironically stands for [JavaScript for GNOME](https://gjs.guide/).
 
 ## Status
 
@@ -95,6 +96,7 @@ GNOME extensions are typically written with GJS - where GJS ironically stands fo
 2025-05-30 Got a rough draft of the status bar UI completed and captured a demo amimated gif. See above.
 2025-06-05 The summary display is working; although notification is _possible_ it is not clear how to do that. It is disabled for now.
 2025-06-06 Added devcontainer definition - cannot perform `pnpm run nested` in the devcontainer - run it on the host instead !
+2025-06-07 Added pollingRuleAdapter and CompositeRuleAdapter class - completed phase 1 !
 
 ## Reference
 - https://gjs.guide/
