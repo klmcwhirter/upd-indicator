@@ -9,7 +9,7 @@ In the list of updates are the bluefin OS, branches of my cpython fork and my fe
 The clip shows the rule definitions, the steps I take to resolve each item and shows each dropping off the list as they are updated.
 
 > Please note that the items drop from the list so quickly because I have the monitorRate set to 15 secs during development.
-> Something like 1-2 hr momnitorRate is probably more reasonable.
+> Something like 1-2 hr monitorRate is probably more reasonable.
 
 See below for links to the individual artifacts.
 
