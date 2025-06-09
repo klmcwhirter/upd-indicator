@@ -34,7 +34,7 @@ export class MonitorRule {
     parseCommand() {
         debugLog('parseCommand: rule.name=', this.name, 'rule.command=', this.command);
         // This function may throw an error
-        const [, argv] = GLib.shell_parse_argv(this.command);
+        const [, argv] = GLib.shell_parse_argv('nice --adjustment=20 ' + this.command);
         debugLog('parseCommand: argv=', argv);
         return argv;
     }

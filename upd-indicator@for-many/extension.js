@@ -229,16 +229,9 @@ export default class UpdIndicatorExtension extends Extension {
 
             doNotDisturbAtStart: false,
             blinkRate: 5000 /* ms */,
-            monitorRate: 15000 /* ms */,
+            monitorRate: 20000 /* ms */,
 
             rules: [
-                new MonitorRule({
-                    name: 'random',
-                    description: 'random number of hard-coded strings',
-                    enabled: false,
-                    command: '@random',
-                    notErrorCode: 0
-                }),
                 new MonitorRule({
                     name: 'bluefin',
                     description: 'check if there are updates to bluefin via rpm-ostree',
@@ -258,6 +251,13 @@ export default class UpdIndicatorExtension extends Extension {
                     description: 'check if there are updates to fedora-python-dx',
                     enabled: true,
                     command: 'fedora-python-dx-has-updates.sh',
+                    notErrorCode: 0
+                }),
+                new MonitorRule({
+                    name: 'always update for testing',
+                    description: 'always return update',
+                    enabled: true,
+                    command: 'update_always.sh',
                     notErrorCode: 0
                 })
             ]
