@@ -1,20 +1,17 @@
-.upd-indicator-icon-green {
-  color: lightgreen;
+.panel-button-icon {
   background-color: transparent;
   height: 20px;
   width: 20px;
 }
 
-.upd-indicator-icon-normal {
-  color: white;
-  background-color: transparent;
-  height: 20px;
-  width: 20px;
+.upd-indicator-menu-item-name {
+  font-weight: semibold;
 }
 
-.upd-indicator-icon-blink {
-  color: blue;
-  background-color: transparent;
-  height: 20px;
-  width: 20px;
+.upd-indicator-menu-item-status {
+  color: gold;
+}
+
+.upd-indicator-menu-item-extra {
+  color: aquamarine;
 }

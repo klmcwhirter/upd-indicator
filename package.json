@@ -4,14 +4,19 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "nested": "env GNOME_SHELL_SLOWDOWN_FACTOR=2 MUTTER_DEBUG_DUMMY_MODE_SPECS=1024x768 dbus-run-session -- gnome-shell --nested --wayland",
+    "nested": "env SHELL_DEBUG=all GNOME_SHELL_SLOWDOWN_FACTOR=2 MUTTER_DEBUG_DUMMY_MODE_SPECS=1024x768 dbus-run-session -- gnome-shell --nested --wayland 2>&1 | tee nested.log",
     "enable": "gnome-extensions enable upd-indicator@for-many",
     "disable": "gnome-extensions disable upd-indicator@for-many",
     "local:install": "./local-install.sh",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "lint": "eslint upd-indicator@for-many/"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "packageManager": "pnpm@10.11.0"
+  "packageManager": "pnpm@10.11.1",
+  "devDependencies": {
+    "@eslint/js": "^9.28.0",
+    "eslint": "^9.28.0",
+    "globals": "^16.2.0"
+  }
 }
