@@ -1,0 +1,34 @@
+---
+name: Bug report
+about: Create a report to help us improve
+title: ''
+labels: ''
+assignees: ''
+
+---
+
+**Describe the bug**
+A clear and concise description of what the bug is.
+
+**What components are impacted?**
+ Please specify one of unknown, extension, REST API, or both
+
+**To Reproduce**
+_Remove this and describe in your own words and with as much detail as practical._
+Steps to reproduce the behavior:
+1. Go to '...'
+2. Click on '....'
+3. Scroll down to '....'
+4. See error
+
+**Expected behavior**
+A clear and concise description of what you expected to happen.
+
+**Screenshots**
+If applicable, add screenshots to help explain your problem.
+
+**Linux Distro (please complete the following information):**
+e.g. bluefin, bazzite (GNOME), other (please specify)
+
+**Additional context**
+Add any other context about the problem here.
