@@ -10,6 +10,9 @@ assignees: ''
 **Is your feature request related to a problem? Please describe.**
 A clear and concise description of what the problem is. Ex. I'm always frustrated when [...]
 
+**What components are impacted?**
+ Please specify one of unknown, extension, REST API, or both
+ 
 **Describe the solution you'd like**
 A clear and concise description of what you want to happen.
 

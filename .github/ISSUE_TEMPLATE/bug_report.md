@@ -10,7 +10,11 @@ assignees: ''
 **Describe the bug**
 A clear and concise description of what the bug is.
 
+**What components are impacted?**
+ Please specify one of unknown, extension, REST API, or both
+
 **To Reproduce**
+_Remove this and describe in your own words and with as much detail as practical._
 Steps to reproduce the behavior:
 1. Go to '...'
 2. Click on '....'
@@ -23,16 +27,8 @@ A clear and concise description of what you expected to happen.
 **Screenshots**
 If applicable, add screenshots to help explain your problem.
 
-**Desktop (please complete the following information):**
- - OS: [e.g. iOS]
- - Browser [e.g. chrome, safari]
- - Version [e.g. 22]
-
-**Smartphone (please complete the following information):**
- - Device: [e.g. iPhone6]
- - OS: [e.g. iOS8.1]
- - Browser [e.g. stock browser, safari]
- - Version [e.g. 22]
+**Linux Distro (please complete the following information):**
+e.g. bluefin, bazzite (GNOME), other (please specify)
 
 **Additional context**
 Add any other context about the problem here.
