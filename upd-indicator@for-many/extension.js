@@ -1,204 +1,301 @@
-
+import Clutter from 'gi://Clutter';
 import GObject from 'gi://GObject';
-import Gio from 'gi://Gio';
 import St from 'gi://St';
 
-import { Extension, gettext as _ } from 'resource:///org/gnome/shell/extensions/extension.js';
+
+import { Extension } from 'resource:///org/gnome/shell/extensions/extension.js';
+import * as Main from 'resource:///org/gnome/shell/ui/main.js';
 import * as PanelMenu from 'resource:///org/gnome/shell/ui/panelMenu.js';
 import * as PopupMenu from 'resource:///org/gnome/shell/ui/popupMenu.js';
 
-import * as Main from 'resource:///org/gnome/shell/ui/main.js';
 
-let _updates_list = [];
+import { debugLog, errorLog, infoLog } from './log.js';
+import { MonitorRule, UpdatesMonitor } from './monitor.js';
+import { UpdateItem } from './update-item.js';
 
-const Indicator = GObject.registerClass(
-    class Indicator extends PanelMenu.Button {
-        _blinkStateIsNormal;
+function colorStyle(colors, colorKey) {
+    const extra = colorKey === 'menu-item-name' ? 'font-weight: bold;' : '';
+    return `color: ${colors[colorKey]};${extra}`;
+}
 
-        _init() {
-            super._init(0.0, _('Update Indicator'));
+class UpdatesMenuItem extends PopupMenu.PopupBaseMenuItem {
+    static {
+        GObject.registerClass(this);
+    }
 
-            this._blinkStateIsNormal = true;
+    constructor(update, colors) {
+        super(update.name, {
+            activate: false,
+            // reactive: false,
+            can_focus: false,
+            style_class: 'popup-menu-item',
+            update: update,
+            colors: colors
+        });
+        // this.sensitive = false;
+    }
 
-            this._indicatorIcon = new St.Icon({
-                icon_name: this.iconName,
-                style_class: this.iconStateClass
-            });
+    _init(_text, params) {
+        debugLog('UpdatesMenuItem._init: params=', params);
 
-            this.add_child(this._indicatorIcon);
+        const update = params.update;
+        delete params.update;
+        const colors = params.colors;
+        delete params.colors;
 
-            let item = new PopupMenu.PopupMenuItem(_('Show Updates'));
-            item.connect('activate', () => {
-                const subject = _updates_list.length > 0 ? _('Update(s) available') : _('No updates available.');
-                const msg = _updates_list.length > 0 ? _updates_list.join(", ") : _('Everything is up to date.');
+        super._init(params);
 
-                Main.notify(subject, msg);
-            });
-            this.menu.addMenuItem(item);
-        }
+        this.box = new St.BoxLayout({
+            orientation: Clutter.Orientation.HORIZONTAL
+        });
 
-        get iconName() {
-            return _updates_list.length === 0 ? 'selection-mode-symbolic' : 'software-update-available-symbolic';
-        }
+        const props = ['name', 'status', 'extra']
+        props.forEach((prop) => {
+            if (prop in update && update[prop] !== null && update[prop] !== undefined) {
+                let label = new St.Label({
+                    text: update[prop],
+                    y_expand: true,
+                    y_align: Clutter.ActorAlign.CENTER,
+                    x_expand: true,
+                    x_align: Clutter.ActorAlign.START,
+                    margin_left: 3,
+                    margin_right: 3,
+                    width: 200,
+                    style: colorStyle(colors, `menu-item-${prop}`)
+                });
+                label.clutter_text.set_line_wrap(true);
+                this.box.add_child(label);
+            }
+        });
 
-        get iconStateClass() {
-            return _updates_list.length === 0 ? 'upd-indicator-icon-green' :
-                this._blinkStateIsNormal ? 'upd-indicator-icon-normal' : 'upd-indicator-icon-blink';
-        }
+        this.add_child(this.box);
+        this.label_actor = this.box;
+    }
+}
 
-        iconBlink() {
-            console.debug(`iconBlink: ${this._blinkStateIsNormal} ==> ${!this._blinkStateIsNormal}`);
-            this._indicatorIcon.icon_name = this.iconName;
+class UpdatesMenu extends PanelMenu.Button {
+    static {
+        GObject.registerClass(this);
+    }
 
-            this._blinkStateIsNormal = !this._blinkStateIsNormal;
+    constructor({ ctx }) {
+        super({ ctx: ctx });
+    }
 
-            this._indicatorIcon.style_class = this.iconStateClass;
-        }
+    _init({ ctx }) {
+        super._init(0.0, 'Update Indicator');
+        this.ctx = ctx;
 
-        iconReset() {
-            console.debug('iconReset: ');
+        this.monitor = this.ctx.monitor;
 
-            this._blinkStateIsNormal = false;
-            this.iconBlink();
-            this._updates_list = [];
-        }
+        this.blinkStateIsNormal = true;
+        this.doNotDisturb = ctx.doNotDisturbAtStart;
 
-    });
+        this.indicatorIcon = new St.Icon({
+            icon_name: this.iconName,
+            style_class: 'panel-button-icon'
+        });
 
-class IntervalAction {
-    #interval = null;
-    #logText;
-    #actionFunc;
-    #rate;
-    #rateDesc;
+        this.add_child(this.indicatorIcon);
 
-    constructor(logText, actionFunc, rate, rateDesc) {
-        this.#logText = logText;
-        this.#actionFunc = actionFunc;
-        this.#rate = rate;
-        this.#rateDesc = rateDesc;
+        this._create();
+
+        this.monitor.connect('icon-blink', () => this.iconBlink());
+        this.monitor.connect('icon-reset', () => this.iconReset());
+        this.monitor.connect('dnd-clear', () => { this.doNotDisturb = false; this._setColors(); });
+        this.monitor.connect('dnd-set', () => { this.doNotDisturb = true; this._setColors(); });
+        this.monitor.connect('updates-list-updated', () => this._rebuildDisplay());
     }
 
     destroy() {
-        if (this.#interval !== null) {
-            clearInterval(this.#interval);
-            this.#interval = null;
+        super.destroy();
+    }
+
+    get dndColorKey() {
+        return this.doNotDisturb ? 'dnd-label-on' : 'dnd-label-off';
+    }
+
+    get iconName() {
+        return this.monitor.updatesEmpty() ? this.ctx.icons['green'] : this.ctx.icons['updates'];
+    }
+
+    get iconStyleColorKey() {
+        return this.doNotDisturb ? 'dnd' :
+            this.monitor.updatesEmpty() ? 'green' :
+                this.blinkStateIsNormal ? 'normal' : 'blink';
+    }
+
+    _create() {
+        this.indicatorIcon.icon_name = this.iconName;
+
+        this.dnd = new PopupMenu.PopupMenuItem(this.ctx.text['toggle-dnd']);
+        this.dnd.connect('activate', () => {
+            this.monitor.toggleDoNotDisturb();
+            this.iconReset();
+        });
+        this.menu.addMenuItem(this.dnd);
+
+        this.menu.addMenuItem(new PopupMenu.PopupSeparatorMenuItem());
+
+        const updatesList = this.monitor.updates();
+        debugLog('UpdatesMenu._create: updatesList=', updatesList);
+
+        if (updatesList.length > 0) {
+            updatesList.forEach((u) => {
+                const updateItem = new UpdatesMenuItem(u, this.ctx.colors);
+                this.menu.addMenuItem(updateItem);
+            });
+        } else {
+            const updateItem = new UpdatesMenuItem(
+                new UpdateItem({
+                    name: this.ctx.text['no-upd-avail'],
+                    status: this.ctx.text['no-upd-status']
+                }),
+                this.ctx.colors
+            );
+            this.menu.addMenuItem(updateItem);
         }
+
+        this._setColors();
     }
 
-    get running() {
-        return this.#interval !== null;
+    _rebuildDisplay() {
+        this.menu.removeAll();
+        this._create();
     }
 
-    info() {
-        console.log(`${this.#logText} interval defined with ${this.#rate / 1000} ${this.#rateDesc}`);
+    _setColors() {
+        const colors = this.ctx.colors;
+        const extra = 'font-weight: bold;';
+        this.dnd.label.style = `${colorStyle(colors, this.dndColorKey)}${extra}`;
+        this.indicatorIcon.style = colorStyle(colors, this.iconStyleColorKey);
     }
 
-    start() {
-        if (!this.running) {
-            console.log(`${this.#logText} starting interval with ${this.#rate / 1000} ${this.#rateDesc}`);
+    iconBlink() {
+        debugLog(`iconBlink: blinkStateIsNormal=${this.blinkStateIsNormal}`);
+        this.blinkStateIsNormal = !this.blinkStateIsNormal;
 
-            this.#actionFunc(); // run 1 time before the delay
+        this.indicatorIcon.icon_name = this.iconName;
 
-            this.#interval = setInterval(this.#actionFunc, this.#rate);
-        }
+        this._setColors();
     }
 
-    stop() {
-        if (this.running) {
-            console.log(`${this.#logText} stopping interval`);
-            clearInterval(this.#interval);
-            this.#interval = null;
-        }
+    iconReset() {
+        debugLog('iconReset: ');
+
+        // this.monitor.setUpdates([]);
+
+        this.blinkStateIsNormal = true;
+        this.iconBlink();
     }
+
 }
 
-const dummyUpdates = [
-    'rpm-ostree status',
-    'ublue-os url',
-    'cpython#3.15',
-    'brew',
-    'sympy',
-    'flatpak',
-    'errors in dmesg'
-];
-
-function randomChoices(arr, num) {
-    const rc = [];
-    while (rc.length < num) {
-        const potential = arr[Math.floor(Math.random() * num)];
-        if (rc.includes(potential)) {
-            continue;
-        }
-
-        rc.push(potential);
-    }
-    return rc;
-}
-
-function randomRuleAdaper() {
-    // Decide whether or not to return updates
-    if (Math.random() < 0.5) {
-        _updates_list = [];
-        return false;
-    }
-
-    const numUpds = Math.floor(Math.random() * dummyUpdates.length);
-    const choices = randomChoices(dummyUpdates, numUpds);
-    if (choices.length === 0) {
-        _updates_list = [];
-        return false;
-    }
-    _updates_list = choices.slice(0, numUpds);  // .join(",\n ");
-    return true;
-}
-
-export default class IndicatorExampleExtension extends Extension {
-    #blinkInterval = null;
-    #monitorInterval = null;
-    #indicator = null;
-
-    get blinkRate() { return 5000 /* ms */; }
-
-    get monitorRate() { return 15000 /* ms */; }
-
-    _monitorAction() {
-        console.log('upd-indicator - _monitorAction');
-
-        const updatesAvailable = randomRuleAdaper();
-
-        if (this.#blinkInterval.running) {
-            console.log('upd-indicator - _monitorAction: already blinking ... re-checking updates');
-
-            if (!updatesAvailable) {
-                this.#blinkInterval.stop();
-                this.#indicator.iconReset();
-            }
-        }
-        else if (updatesAvailable) {
-            console.log('upd-indicator - _monitorAction: found updates');
-            this.#blinkInterval.start();
-        }
-    }
+export default class UpdIndicatorExtension extends Extension {
+    monitor = null;
+    menu = null;
 
     enable() {
-        this.#indicator = new Indicator();
-        Main.panel.addToStatusArea(this.uuid, this.#indicator);
+        this.displayName = this.metadata.uuid.split('@')[0];
 
-        this.#blinkInterval = new IntervalAction('upd-indicator: blink - ', this.#indicator.iconBlink.bind(this.#indicator), this.blinkRate, 'secs blink rate');
-        this.#blinkInterval.info();
-        this.#monitorInterval = new IntervalAction('upd-indicator: monitor - ', this._monitorAction.bind(this), this.monitorRate, 'secs monitor rate');
-        this.#monitorInterval.info();
+        // TODO - these will come from prefs
+        const ctx = {
+            // https://gjs.guide/extensions/review-guidelines/review-guidelines.html#gsettings-schemas
+            // "settings-schema": "org.gnome.shell.extensions.upd-indicator"
 
-        this.#monitorInterval.start();
+            displayName: this.displayName,
+            monitor: null,
+
+            icons: {
+                'green': 'selection-mode-symbolic',
+                'updates': 'software-update-available-symbolic'
+            },
+            colors: {
+                'green': 'lightgreen',
+                'normal': 'white',
+                'blink': 'cornflowerblue',
+                'dnd': 'gray',
+                'dnd-label-on': 'red',
+                'dnd-label-off': 'white',
+                'menu-item-name': 'lightgray',
+                'menu-item-status': 'aquamarine',
+                'menu-item-extra': 'cornflowerblue'
+            },
+            text: {
+                'no-upd-avail': 'No Updates Available',
+                'no-upd-status': 'Everything is up to date.',
+                'toggle-dnd': 'Toggle Do Not Disturb',
+            },
+
+            doNotDisturbAtStart: false,
+            blinkRate: 5000 /* ms */,
+            monitorRate: 20000 /* ms */,
+
+            rules: [
+                new MonitorRule({
+                    name: 'bluefin',
+                    description: 'check if there are updates to bluefin via rpm-ostree',
+                    enabled: true,
+                    command: 'rpm-ostree-update-check.sh',
+                    notErrorCode: 0
+                }),
+                new MonitorRule({
+                    name: 'cpython fork behind',
+                    description: 'check if there are missing commits in my cpython fork',
+                    enabled: true,
+                    command: 'cpython-clone-behind.sh',
+                    notErrorCode: 0
+                }),
+                new MonitorRule({
+                    name: 'fedora-python-dx',
+                    description: 'check if there are updates to fedora-python-dx',
+                    enabled: true,
+                    command: 'fedora-python-dx-has-updates.sh',
+                    notErrorCode: 0
+                }),
+                new MonitorRule({
+                    name: 'always update for testing',
+                    description: 'always return update',
+                    enabled: true,
+                    command: 'update_always.sh',
+                    notErrorCode: 0
+                })
+            ]
+        }
+
+        infoLog(`${this.displayName} is starting ...`);
+
+        try {
+            this.monitor = new UpdatesMonitor({ ctx: ctx });
+            ctx.monitor = this.monitor;
+
+            this.menu = new UpdatesMenu({ ctx: ctx });
+            Main.panel.addToStatusArea(this.uuid, this.menu);
+        } catch (err) {
+            this.stop = true;
+            errorLog(`Error initializing: `, err);
+        }
+
+        infoLog(`${this.displayName} is starting ... done.`);
+
+        if (this.stop) {
+            this.disable();
+        }
     }
 
     disable() {
-        this.#monitorInterval.destroy();
-        this.#blinkInterval.destroy();
+        infoLog(`${this.displayName} is stopping ...`);
 
-        this.#indicator.iconReset();
-        this.#indicator.destroy();
-        this.#indicator = null;
+        if (this.monitor instanceof UpdatesMonitor) {
+            this.monitor.destroy();
+            delete this.monitor;
+        }
+
+        if (this.menu instanceof UpdatesMenu) {
+            this.menu.destroy();
+            delete this.menu;
+        }
+
+        infoLog(`${this.displayName} is stopping ... done.`);
     }
 }

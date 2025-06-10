@@ -10,28 +10,40 @@ GNOME extension that provides indication that updates are available
 
 ## Background
 
-There are a few of us using rpm-ostree enabled desktops that are frustrated with the lack of transparency of the update process. And we are not given a way to control the system with regards to the various types of updates that occur.
+Some indication of when various updates need our attention would be useful. And not just for OS updates, but various maintenance activities whether related to the local system or not.
 
-In addition, the auto system update process has not worked recently if the system is suspended or off at the time the update needs to run.
+If a command line can be crafted to provide an indication of when an update is available, that should be all that is needed - right?
 
-And when it does run, the update of things like `distroboxen` creates more troubleshooting issues than it solves.
+Yes it is.
 
-Ideally we would have system level configuration about which auto-update rules "I" want enabled; and a Do Not Disturb button that disables auto update until "I" re-enable them.
+Have a favorite web service you monitor? `curl` it!
 
-Until this whole feature set (in bluefin-dx specifically in my case) matures some more - we (at least) need some indication of when various updates need our attention. Receiving that indication will trigger an activity to plan to reboot or take whatever other action is required for the rules "I" have enabled.
+Tracking a channel on YouTube? If you can write a script to recognize new videos - do it!
 
-## Requirements
+Have some custom `systemd` units for maintenance? Just send a D-Bus message.
 
-- [ ] Phase 1 - monitor `rpm-ostree status -v` output for new deployments and provide a status area indicator of that fact. When the indicator is clicked some summary of the update will be displayed. This will be a proving ground for the more flexibile implementation in phase 2.
+That should be all you need to define a monitoring rule that will cause an indicator to show when there is something that needs your attention.
 
-TODO - actually monitor `rpm-ostree status` and convert the notification to a dialog displaying a list.
+## Milestones
 
-![Phase 1 Demo w/Random hard-coded data](https://github.com/klmcwhirter/stuff/blob/master/upd-indicator-phase1-dummy-data.gif)
+- Phase 1 - prototype
+   - indicator of mode: Do Not Disturb, Updates available, All green
+   - monitoring logic rough draft
+   - do not disturb mode
+   - when the indicator is clicked some summary of the update will be displayed.
+   - start with hard coded dummy data
+   - monitor my `cpython-clone-behind.sh` script output for new commits.
+   
+This will be a proving ground for the more flexibile implementation in phase 2.
 
-I am pretty happy with this rough draft UI, though. Progress is being made.
+Status: 👍
+
+![Phase 1 Demo](https://github.com/klmcwhirter/stuff/blob/master/upd-indicator-phase1-dummy-data.gif)
+
+I am pretty happy with this rough draft UI, though. Time to move to phase 2.
 
 
-- [ ] Phase 2 - add configuration for blinking rate and a "rule editor" so that the user can add their own rules based on what they care about.
+- Phase 2 - add configuration for blinking rate and a "rule editor" so that the user can add their own rules based on what they care about.
 
    The rules will have at least these properties (detailed design TBD):
    - name
@@ -43,10 +55,17 @@ I am pretty happy with this rough draft UI, though. Progress is being made.
    
    The user will have the ability to disable / enable any rule individually. And add their own rules.
    
-   There will also be a global “Do not disturb” button to disable / re-enable monitoring.
-
    The extension should be flexible enough to run on any linux system with GNOME.
 
+- Phase 2 themes:
+
+   * prefs definition and editor
+   * D-Bus protocol and destination path spec
+   * example rules and scripts
+   * Documentation !
+
+
+Status: design
 
 ## Running the Prototype
 
@@ -65,23 +84,36 @@ Steps:
 - in the current session - `pnpm run local:install`; this copies the needed stuff to `~/.local/share/gnome-shell/extensions/`
 - next, `pnpm run nested`; this will open the nested session in a window
 - in the nested session open a terminal - I use Foot as I mentioned.
-- in the nested terminal session cd to the dir where you cloned, and execute `pnpm run enable`. This takes about 30 secs for whatever reason.
+- in the nested terminal session cd to the dir where you cloned, and execute `pnpm run enable` once the session has initialized.
+
+> Note it takes about 30 secs for the nested shell session to initialize.
 
 You will begin to see the UI change in the nested session and the log output in the outer current session
 
-To shutdown, do `pnpm run disable` in the nested session, log out of the nested session and close the window.
+To shutdown, do `pnpm run disable` in the nested session, and close the window.
 
 You should be back where you started and ready to launch again.
 
 ## Approach
 
-GNOME extensions are typically written with GJS - where GJS ironically stands for [JavaScript for GNOME](https://gjs.guide/). While other languages can be used, the Javascript bindings are most common.
+GNOME extensions are written with GJS - where GJS ironically stands for [JavaScript for GNOME](https://gjs.guide/).
 
 ## Status
 
-2025-05-29 I have just created this repo and put up a call to action at [Bluefin - flexible update indicator project](https://universal-blue.discourse.group/t/bluefin-flexible-update-indicator-project/8844).
-2025-05-30 Got a rough draft of the status bar UI completed and captured a demo amimated gif. See above.
+- 2025-05-29 I have just created this repo and put up a call to action at [Bluefin - flexible update indicator project](https://universal-blue.discourse.group/t/bluefin-flexible-update-indicator-project/8844).
+- 2025-05-30 Got a rough draft of the status bar UI completed and captured a demo amimated gif. See above.
+- 2025-06-05 The summary display is working; although notification is _possible_ it is not clear how to do that. It is disabled for now.
+- 2025-06-06 Added devcontainer definition - cannot perform `pnpm run nested` in the devcontainer - run it on the host instead !
+- 2025-06-07 Added pollingRuleAdapter, CompositeRuleAdapter class and demos - completed phase 1 ! Started phase 2 design
+
+## Examples
+
+|Link|Description|
+| --- | --- |
+|[![phase 1 example demo thumbnail](./examples/phase1-demo/upd-indicator-example-rules-thumbnail.png)](./examples/phase1-demo/README.md)|shows rule definitions, the steps I take to resolve each item and shows each dropping off the list as they are updated|
 
 ## Reference
 - https://gjs.guide/
+- https://gjs.guide/guides/gio/subprocesses.html
+- https://gjs.guide/guides/gjs/asynchronous-programming.html
 - https://gjs-docs.gnome.org/
