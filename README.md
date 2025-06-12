@@ -76,7 +76,7 @@ Status: implementation
 
 It is written in Python and uses `Gio.Settings` to retrieve the extensions prefs.
 
-PLACEHOLDER
+_See [upd_indicator](./upd_indicator/README.md) for details._
 
 ## Running the Prototype
 
@@ -116,6 +116,7 @@ GNOME extensions are written with GJS - where GJS ironically stands for [JavaScr
 - 2025-06-05 The summary display is working; although notification is _possible_ it is not clear how to do that. It is disabled for now.
 - 2025-06-06 Added devcontainer definition - cannot perform `pnpm run nested` in the devcontainer - run it on the host instead !
 - 2025-06-07 Added pollingRuleAdapter, CompositeRuleAdapter class and demos - completed phase 1 ! Started phase 2 design
+- 2025-06-12 Added upd_indicator Python program to monitor CLI commands and place json files in `monitor-location`; revised `upd-indicator` extension to poll that dir for `json` files. _See [#22](https://github.com/klmcwhirter/upd-indicator/issues/22)_
 
 ## Examples
 
