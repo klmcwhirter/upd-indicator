@@ -76,7 +76,7 @@ Status: implementation
 
 It is written in Python and uses `Gio.Settings` to retrieve the extensions prefs.
 
-_See [upd_indicator](./upd_indicator/README.md) for details._
+_See [upd_monitor](./upd_monitor/README.md) for details._
 
 ## Running the Prototype
 
@@ -109,6 +109,8 @@ You should be back where you started and ready to launch again.
 
 GNOME extensions are written with GJS - where GJS ironically stands for [JavaScript for GNOME](https://gjs.guide/).
 
+_Also see [docs/](./docs/README.md) for details._
+
 ## Status
 
 - 2025-05-29 I have just created this repo and put up a call to action at [Bluefin - flexible update indicator project](https://universal-blue.discourse.group/t/bluefin-flexible-update-indicator-project/8844).
@@ -117,6 +119,7 @@ GNOME extensions are written with GJS - where GJS ironically stands for [JavaScr
 - 2025-06-06 Added devcontainer definition - cannot perform `pnpm run nested` in the devcontainer - run it on the host instead !
 - 2025-06-07 Added pollingRuleAdapter, CompositeRuleAdapter class and demos - completed phase 1 ! Started phase 2 design
 - 2025-06-12 Added upd_indicator Python program to monitor CLI commands and place json files in `monitor-location`; revised `upd-indicator` extension to poll that dir for `json` files. _See [#22](https://github.com/klmcwhirter/upd-indicator/issues/22)_
+- 2025-06-13 Renamed upd_indicator to upd_monitor; added reference systemd units to orchestrate its invocation
 
 ## Examples
 

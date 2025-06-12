@@ -1,8 +1,8 @@
-'''The upd_indicator command line interface'''
+'''The upd_monitor command line interface'''
 
 import argparse
 
-from upd_indicator.models import AppContext
+from upd_monitor.models import AppContext
 
 
 def parse_args(args: list[str]) -> AppContext:

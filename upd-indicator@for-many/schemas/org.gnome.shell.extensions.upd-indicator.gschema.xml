@@ -4,7 +4,7 @@
   <schema path="/org/gnome/shell/extensions/upd-indicator/" id="org.gnome.shell.extensions.upd-indicator">
 
     <key type="i" name="monitor-rate">
-      <default>20000</default>
+      <default>900000</default>
       <summary>Monitor Rate (ms)</summary>
       <description>Change the Monitor Rate in milliseconds.</description>
     </key>
@@ -117,8 +117,7 @@
       <default>"[
       {\"name\":\"bluefin\",\"description\":\"check if there are updates to bluefin via rpm-ostree\",\"enabled\":true,\"command\":\"rpm-ostree-update-check.sh\",\"notErrorCode\":0},
       {\"name\":\"cpython fork behind\",\"description\":\"check if there are missing commits in my cpython fork\",\"enabled\":true,\"command\":\"cpython-clone-behind.sh\",\"notErrorCode\":0},
-      {\"name\":\"fedora-python-dx\",\"description\":\"check if there are updates to fedora-python-dx\",\"enabled\":true,\"command\":\"fedora-python-dx-has-updates.sh\",\"notErrorCode\":0},
-      {\"name\":\"always update for testing\",\"description\":\"always return update\",\"enabled\":true,\"command\":\"update_always.sh\",\"notErrorCode\":0}
+      {\"name\":\"fedora-python-dx\",\"description\":\"check if there are updates to fedora-python-dx\",\"enabled\":true,\"command\":\"fedora-python-dx-has-updates.sh\",\"notErrorCode\":0}
       ]"</default>
       <summary>Rules as a JSON array</summary>
       <description>Use the provided editor to manage the list of rules.</description>

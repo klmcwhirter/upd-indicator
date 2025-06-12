@@ -5,8 +5,8 @@ import sys
 from dataclasses import dataclass
 from pprint import pformat
 
-from upd_indicator.settings import from_settings
-from upd_indicator.utils import cmd_with_output
+from upd_monitor.settings import from_settings
+from upd_monitor.utils import cmd_with_output
 
 
 @dataclass
