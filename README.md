@@ -36,18 +36,23 @@ That should be all you need to define a monitoring rule that will cause an indic
    
 This will be a proving ground for the more flexibile implementation in phase 2.
 
+I am pretty happy with this rough draft UI, though. Time to move to phase 2.
+
 Status: 👍
+
+<details>
+
+<summary>Expand to see the phase 1 demo ...</summary>
 
 ![Phase 1 Demo](https://github.com/klmcwhirter/stuff/blob/master/upd-indicator-phase1-dummy-data.gif)
 
-I am pretty happy with this rough draft UI, though. Time to move to phase 2.
+</details>
 
 
 - Phase 2 - add configuration for blinking rate and a "rule editor" so that the user can add their own rules based on what they care about.
 
    The rules will have at least these properties (detailed design TBD):
    - name
-   - icon
    - enabled
    - command to monitor
    - expected response that means “updates available”
@@ -60,12 +65,18 @@ I am pretty happy with this rough draft UI, though. Time to move to phase 2.
 - Phase 2 themes:
 
    * prefs definition and editor
-   * D-Bus protocol and destination path spec
+   * program written in Python to be executed via systemd
    * example rules and scripts
    * Documentation !
 
 
-Status: design
+Status: implementation
+
+## Running the Python program to monitor for updates
+
+It is written in Python and uses `Gio.Settings` to retrieve the extensions prefs.
+
+PLACEHOLDER
 
 ## Running the Prototype
 
@@ -117,3 +128,4 @@ GNOME extensions are written with GJS - where GJS ironically stands for [JavaScr
 - https://gjs.guide/guides/gio/subprocesses.html
 - https://gjs.guide/guides/gjs/asynchronous-programming.html
 - https://gjs-docs.gnome.org/
+- https://pygobject.gnome.org/getting_started.html#fedora-logo-fedora

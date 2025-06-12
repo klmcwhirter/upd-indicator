@@ -1,46 +1,10 @@
-import GLib from 'gi://GLib';
 import Gio from 'gi://Gio';
 
 import { EventEmitter } from 'resource:///org/gnome/shell/misc/signals.js';
-import { CompositeRuleAdapter } from './composite-adapter.js';
+
+import { debugLog } from '../common-lib/log.js';
 import { IntervalAction } from './interval.js';
-import { debugLog } from './log.js';
-import { pollingRuleAdapter, pollingRuleAdapterCanProcess } from './polling-adapter.js';
-import { randomRuleAdapter, randomRuleAdapterCanProcess } from './random-adapter.js';
-
-export class MonitorRule {
-    name;
-    description;
-    enabled;
-    command;
-    notErrorCode;
-
-    constructor({ name, description, enabled, command, notErrorCode }) {
-        this.name = name;
-        this.description = description;
-        this.enabled = enabled;
-        this.command = command;
-        this.notErrorCode = notErrorCode;
-    }
-
-
-    /**
-     * Parse the command for a @rule and return the array @argv
-     * for use by execCommunicate.
-     *
-     * @param {MonitorRule} this - the rule being processed
-     * @returns {string[]} - the argv array
-     */
-    parseCommand() {
-        debugLog('parseCommand: rule.name=', this.name, 'rule.command=', this.command);
-        // This function may throw an error
-        const [, argv] = GLib.shell_parse_argv('nice --adjustment=20 ' + this.command);
-        debugLog('parseCommand: argv=', argv);
-        return argv;
-    }
-
-    /* TODO: save prefs */
-}
+import { pollingLocationAdapter } from './polling-adapter.js';
 
 
 export class UpdatesMonitor extends EventEmitter {
@@ -50,19 +14,15 @@ export class UpdatesMonitor extends EventEmitter {
     constructor({ ctx }) {
         super();
 
+        this.ctx = ctx;
+
         this.displayName = ctx.displayName;
-        this.rules = ctx.rules.filter((u) => u.enabled);  // only want enabled rules
         this.blinkRate = ctx.blinkRate;
         this.monitorRate = ctx.monitorRate;
-
         this.doNotDisturb = ctx.doNotDisturbAtStart;
 
+        this.textDecoder = new TextDecoder();
         this.cancellable = new Gio.Cancellable();
-
-        this.ruleAdapter = new CompositeRuleAdapter({
-            adapters: [pollingRuleAdapter, randomRuleAdapter],
-            predicates: [pollingRuleAdapterCanProcess, randomRuleAdapterCanProcess]
-        });
 
         this.updatesList = []; // do not emit change
         this._reset_dnd();
@@ -100,7 +60,7 @@ export class UpdatesMonitor extends EventEmitter {
     _monitorAction() {
         debugLog(`${this.displayName} - _monitorAction`);
 
-        const updates = this.ruleAdapter.run(this.rules, this.cancellable);
+        const updates = pollingLocationAdapter(this.ctx.monitorLocation, this.textDecoder, this.cancellable);
         this.setUpdates(updates);
 
         if (this.blinkInterval.running) {
