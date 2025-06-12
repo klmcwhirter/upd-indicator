@@ -306,6 +306,8 @@ export default class UpdIndicatorExtension extends Extension {
             delete this.menu;
         }
 
+        this.setttings = null;
+
         infoLog(`${this.displayName} is stopping ... done.`);
     }
 }

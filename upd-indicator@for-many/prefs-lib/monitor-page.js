@@ -69,7 +69,7 @@ export const UpdIndicatorMonitorPage = GObject.registerClass(class UpdIndicatorM
             title: _('Created by'),
         });
         createdByRow.add_suffix(new Gtk.Label({
-            label: 'Kevin McWhirter',
+            label: 'klmcwhirter',
         }));
 
         const githubLinkRow = new Adw.ActionRow({

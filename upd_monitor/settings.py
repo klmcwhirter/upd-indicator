@@ -1,5 +1,4 @@
 import json
-from typing import Any
 
 # THESE LINES MUST OCCUR IN THIS EXACT ORDER - START
 import gi  # isort:skip

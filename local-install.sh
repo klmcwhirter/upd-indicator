@@ -1,5 +1,6 @@
 #!/bin/sh
 
+root=$(realpath $(dirname $0))
 GNOME_EXT_HOME=$(realpath -L "$HOME/.local/share/gnome-shell/extensions")
 EXT='upd-indicator@for-many'
 
@@ -28,3 +29,6 @@ popd
 
 echo rm -f ${EXT}/LICENSE 
 rm -f ${EXT}/LICENSE 
+
+echo ln -sf ${root}/upd_monitor.sh ~/.local/bin
+ln -sf ${root}/upd_monitor.sh ~/.local/bin

@@ -1,9 +1,9 @@
-'''upd_indicator monitor reference implementation'''
+'''upd_monitor monitor reference implementation'''
 
 import sys
 
-from upd_indicator.cli import parse_args
-from upd_indicator.steps import run_steps
+from upd_monitor.cli import parse_args
+from upd_monitor.steps import run_steps
 
 
 def main(args: list[str]) -> int:

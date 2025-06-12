@@ -27,15 +27,15 @@ distclean.composite = ["clean", "envclean"]
 gitignore.shell = "source ~/.local/.bash.d/gitignore.io; gi -s -- node,python >.gitignore;echo '\nupd-indicator@for-many.shell-extension.zip\ngschemas.compiled\n.pdm-python\n' >>.gitignore"
 gitignore.help = "generate .gitignore"
 
-flake8 = "flake8 upd_indicator/"
+flake8 = "flake8 upd_monitor/"
 
-mypy = "mypy upd_indicator/"
+mypy = "mypy upd_monitor/"
 
 test.composite = ["flake8", "mypy"] # "pytest"
 
 pytest.cmd = "pytest"
 
-testcov.cmd = "pytest --cov=upd_indicator --cov-report xml:coverage.xml --cov-report term"
+testcov.cmd = "pytest --cov=upd_monitor --cov-report xml:coverage.xml --cov-report term"
 testcov.help = "Produce test coverage xml and term reports"
 
 tox = "tox"

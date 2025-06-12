@@ -11,7 +11,7 @@ assignees: ''
 A clear and concise description of what the bug is.
 
 **What components are impacted?**
- Please specify one of unknown, extension, REST API, or both
+ Please specify one of unknown, extension, monitor program, systemd units, or all
 
 **To Reproduce**
 _Remove this and describe in your own words and with as much detail as practical._

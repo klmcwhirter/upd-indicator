@@ -1,14 +1,13 @@
 import glob
 import logging
 import os
-import time
 from contextlib import contextmanager
 from pathlib import Path
 from pprint import pprint
 from typing import Generator
 
-from upd_indicator.models import AppContext
-from upd_indicator.utils import log_entry_exit, run_with_output
+from upd_monitor.models import AppContext
+from upd_monitor.utils import log_entry_exit, run_with_output
 
 
 @contextmanager
