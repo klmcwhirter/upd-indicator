@@ -1,4 +1,4 @@
-import { infoLog } from './log.js';
+import { infoLog } from '../common-lib/log.js';
 
 export class IntervalAction {
     #interval = null;

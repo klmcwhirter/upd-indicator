@@ -1,0 +1,48 @@
+[project]
+name = "upd-indicator"
+version = "0.1.0"
+description = "updates monitoring program for upd-indicator@for-many GNOME extension"
+authors = [{ name = "Kevin McWhirter", email = "klmcw@yahoo.com" }]
+dependencies = []
+requires-python = "==3.14.*"
+readme = "README.md"
+license = { text = "MIT" }
+
+
+[tool.pdm]
+distribution = false
+
+[tool.pdm.scripts]
+create.shell = "pdm sync --group dev"
+create.help = "Create .venv"
+
+clean.shell = "find . -type d -name __pycache__ -exec rm -fr {} \\; 2>/dev/null;for d in ${TO_DEL};do echo $d;rm -fr $d;done"
+clean.env = { TO_DEL = "build .coverage coverage.xml log .mypy_cache nested.log .pdm-build __pycache__ __pypackages__ .pytest_cache .tox" }
+clean.help = "Clean build artifacts"
+envclean.shell = "for d in ${TO_DEL};do echo $d;rm -fr $d;done"
+envclean.env = { TO_DEL = "node_modules/ .venv" }
+envclean.help = "Clean environment"
+distclean.composite = ["clean", "envclean"]
+
+gitignore.shell = "source ~/.local/.bash.d/gitignore.io; gi -s -- node,python >.gitignore;echo '\nupd-indicator@for-many.shell-extension.zip\ngschemas.compiled\n.pdm-python\n' >>.gitignore"
+gitignore.help = "generate .gitignore"
+
+flake8 = "flake8 upd_indicator/"
+
+mypy = "mypy upd_indicator/"
+
+test.composite = ["flake8", "mypy"] # "pytest"
+
+pytest.cmd = "pytest"
+
+testcov.cmd = "pytest --cov=upd_indicator --cov-report xml:coverage.xml --cov-report term"
+testcov.help = "Produce test coverage xml and term reports"
+
+tox = "tox"
+
+[tool.autopep8]
+max-doc-length = 140
+max_line_length = 140
+
+[tool.isort]
+multi_line_output = 3

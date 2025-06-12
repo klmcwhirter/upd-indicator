@@ -9,9 +9,10 @@ import * as PanelMenu from 'resource:///org/gnome/shell/ui/panelMenu.js';
 import * as PopupMenu from 'resource:///org/gnome/shell/ui/popupMenu.js';
 
 
-import { debugLog, errorLog, infoLog } from './log.js';
-import { MonitorRule, UpdatesMonitor } from './monitor.js';
-import { UpdateItem } from './update-item.js';
+import { debugLog, errorLog, infoLog } from './common-lib/log.js';
+import { from_settings } from './common-lib/settings.js';
+import { UpdateItem } from './common-lib/update-item.js';
+import { UpdatesMonitor } from './ext-lib/monitor.js';
 
 function colorStyle(colors, colorKey) {
     const extra = colorKey === 'menu-item-name' ? 'font-weight: bold;' : '';
@@ -116,13 +117,13 @@ class UpdatesMenu extends PanelMenu.Button {
     }
 
     get iconName() {
-        return this.monitor.updatesEmpty() ? this.ctx.icons['green'] : this.ctx.icons['updates'];
+        return this.monitor.updatesEmpty() ? this.ctx.icons['ind-green'] : this.ctx.icons['ind-updates'];
     }
 
     get iconStyleColorKey() {
-        return this.doNotDisturb ? 'dnd' :
-            this.monitor.updatesEmpty() ? 'green' :
-                this.blinkStateIsNormal ? 'normal' : 'blink';
+        return this.doNotDisturb ? 'ind-dnd' :
+            this.monitor.updatesEmpty() ? 'ind-green' :
+                this.blinkStateIsNormal ? 'ind-normal' : 'ind-blink';
     }
 
     _create() {
@@ -197,71 +198,80 @@ export default class UpdIndicatorExtension extends Extension {
 
     enable() {
         this.displayName = this.metadata.uuid.split('@')[0];
+        this.setttings = this.getSettings();
 
         // TODO - these will come from prefs
-        const ctx = {
-            // https://gjs.guide/extensions/review-guidelines/review-guidelines.html#gsettings-schemas
-            // "settings-schema": "org.gnome.shell.extensions.upd-indicator"
+        // const ctx = {
+        //     displayName: this.displayName,
+        //     monitor: null,
 
-            displayName: this.displayName,
-            monitor: null,
+        //     // https://gjs.guide/extensions/review-guidelines/review-guidelines.html#gsettings-schemas
+        //     // "settings-schema": "org.gnome.shell.extensions.upd-indicator"
 
-            icons: {
-                'green': 'selection-mode-symbolic',
-                'updates': 'software-update-available-symbolic'
-            },
-            colors: {
-                'green': 'lightgreen',
-                'normal': 'white',
-                'blink': 'cornflowerblue',
-                'dnd': 'gray',
-                'dnd-label-on': 'red',
-                'dnd-label-off': 'white',
-                'menu-item-name': 'lightgray',
-                'menu-item-status': 'aquamarine',
-                'menu-item-extra': 'cornflowerblue'
-            },
-            text: {
-                'no-upd-avail': 'No Updates Available',
-                'no-upd-status': 'Everything is up to date.',
-                'toggle-dnd': 'Toggle Do Not Disturb',
-            },
+        //     monitorRate: 20000 /* ms */,
+        //     blinkRate: 5000 /* ms */,
+        //     doNotDisturbAtStart: false,
 
-            doNotDisturbAtStart: false,
-            blinkRate: 5000 /* ms */,
-            monitorRate: 20000 /* ms */,
+        //     icons: {
+        //         'ind-green': 'selection-mode-symbolic',
+        //         'ind-updates': 'software-update-available-symbolic'
+        //     },
+        //     colors: {
+        //         'ind-green': 'lightgreen',
+        //         'ind-normal': 'white',
+        //         'ind-blink': 'cornflowerblue',
+        //         'ind-dnd': 'gray',
 
-            rules: [
-                new MonitorRule({
-                    name: 'bluefin',
-                    description: 'check if there are updates to bluefin via rpm-ostree',
-                    enabled: true,
-                    command: 'rpm-ostree-update-check.sh',
-                    notErrorCode: 0
-                }),
-                new MonitorRule({
-                    name: 'cpython fork behind',
-                    description: 'check if there are missing commits in my cpython fork',
-                    enabled: true,
-                    command: 'cpython-clone-behind.sh',
-                    notErrorCode: 0
-                }),
-                new MonitorRule({
-                    name: 'fedora-python-dx',
-                    description: 'check if there are updates to fedora-python-dx',
-                    enabled: true,
-                    command: 'fedora-python-dx-has-updates.sh',
-                    notErrorCode: 0
-                }),
-                new MonitorRule({
-                    name: 'always update for testing',
-                    description: 'always return update',
-                    enabled: true,
-                    command: 'update_always.sh',
-                    notErrorCode: 0
-                })
-            ]
-        }
+        //         'dnd-label-on': 'red',
+        //         'dnd-label-off': 'white',
+        //         'menu-item-name': 'lightgray',
+        //         'menu-item-status': 'aquamarine',
+        //         'menu-item-extra': 'cornflowerblue'
+        //     },
+        //     text: {
+        //         'no-upd-avail': 'No Updates Available',
+        //         'no-upd-status': 'Everything is up to date.',
+        //         'toggle-dnd': 'Toggle Do Not Disturb',
+        //     },
+
+
+        //     rules: {
+        //         list: [
+        //             new MonitorRule({
+        //                 name: 'bluefin',
+        //                 description: 'check if there are updates to bluefin via rpm-ostree',
+        //                 enabled: true,
+        //                 command: 'rpm-ostree-update-check.sh',
+        //                 notErrorCode: 0
+        //             }),
+        //             new MonitorRule({
+        //                 name: 'cpython fork behind',
+        //                 description: 'check if there are missing commits in my cpython fork',
+        //                 enabled: true,
+        //                 command: 'cpython-clone-behind.sh',
+        //                 notErrorCode: 0
+        //             }),
+        //             new MonitorRule({
+        //                 name: 'fedora-python-dx',
+        //                 description: 'check if there are updates to fedora-python-dx',
+        //                 enabled: true,
+        //                 command: 'fedora-python-dx-has-updates.sh',
+        //                 notErrorCode: 0
+        //             }),
+        //             new MonitorRule({
+        //                 name: 'always update for testing',
+        //                 description: 'always return update',
+        //                 enabled: true,
+        //                 command: 'update_always.sh',
+        //                 notErrorCode: 0
+        //             })
+        //         ]
+        //     }
+        // }
+
+        const ctx = from_settings(this.setttings);
+        ctx.displayName = this.displayName;
+        debugLog(`ctx=`, ctx);
 
         infoLog(`${this.displayName} is starting ...`);
 

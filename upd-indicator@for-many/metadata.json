@@ -1,8 +1,15 @@
 {
-  "name": "Update Indicator",
+  "name": "Flexible Update Indicator",
   "description": "GNOME extension that provides indication that updates are available",
   "uuid": "upd-indicator@for-many",
+  "settings-schema": "org.gnome.shell.extensions.upd-indicator",
   "shell-version": [
     "48"
-  ]
+  ],
+  "url": "https://github.com/klmcwhirter/upd-indicator",
+  "version": "1",
+  "version-name": "1.0",
+  "donations": {
+    "custom": "Please donate to your favorite FOSS project!"
+  }
 }
