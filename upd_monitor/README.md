@@ -59,6 +59,10 @@ This should display the gsettings in place.
             'notErrorCode': 0}]}
 ```
 
+## Systemd
+
+But, the intention is that `upd_monitor` be orchestrated via [`systemd` units](../systemd/README.md).
+
 ## References
 - https://pygobject.gnome.org/getting_started.html#fedora-logo-fedora
 - https://github.com/klmcwhirter/oci-shared-images/
