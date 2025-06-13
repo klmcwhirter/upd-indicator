@@ -36,18 +36,9 @@ That should be all you need to define a monitoring rule that will cause an indic
    
 This will be a proving ground for the more flexibile implementation in phase 2.
 
-I am pretty happy with this rough draft UI, though. Time to move to phase 2.
+I am pretty happy with the rough draft UI, though. Time to move to phase 2.
 
 Status: 👍
-
-<details>
-
-<summary>Expand to see the phase 1 demo ...</summary>
-
-![Phase 1 Demo](https://github.com/klmcwhirter/stuff/blob/master/upd-indicator-phase1-dummy-data.gif)
-
-</details>
-
 
 - Phase 2 - add configuration for blinking rate and a "rule editor" so that the user can add their own rules based on what they care about.
 
@@ -80,30 +71,7 @@ _See [upd_monitor](./upd_monitor/README.md) for details._
 
 ## Running the Prototype
 
-The automation uses pnpm / npm. This is a JS project after all. While it is not strictly needed, that is what I am currently using.
-
-See the scripts section in [package.json](./package.json). You can just copy the commands to run from there.
-
-These steps come straight from the [Getting Started section in the GJS Guide](https://gjs.guide/extensions/development/creating.html#wayland-sessions).
-
-I use the terminal in VS Code - it works fine for this. But any old terminal session will do.
-
-Also I found that Ptyxis is painfully slow to start in the nested Wayland session. So I installed the Foot flatpak and use it in the nested session instead.
-
-Steps:
-
-- in the current session - `pnpm run local:install`; this copies the needed stuff to `~/.local/share/gnome-shell/extensions/`
-- next, `pnpm run nested`; this will open the nested session in a window
-- in the nested session open a terminal - I use Foot as I mentioned.
-- in the nested terminal session cd to the dir where you cloned, and execute `pnpm run enable` once the session has initialized.
-
-> Note it takes about 30 secs for the nested shell session to initialize.
-
-You will begin to see the UI change in the nested session and the log output in the outer current session
-
-To shutdown, do `pnpm run disable` in the nested session, and close the window.
-
-You should be back where you started and ready to launch again.
+_See [upd-indicator@for-many](./upd-indicator@for-many/README.md)._
 
 ## Approach
 
@@ -121,10 +89,11 @@ _Also see [docs/](./docs/README.md) for details._
 - 2025-06-12 Added upd_indicator Python program to monitor CLI commands and place json files in `monitor-location`; revised `upd-indicator` extension to poll that dir for `json` files. _See [#22](https://github.com/klmcwhirter/upd-indicator/issues/22)_
 - 2025-06-13 Renamed upd_indicator to upd_monitor; added reference systemd units to orchestrate its invocation
 
-## Examples
+## Demos / Examples
 
 |Link|Description|
 | --- | --- |
+|[![phase 1 early demo with dummy data](./examples/phase1-dummy-data/phase1-with-dummy-data-thumbnail.png)](./examples/phase1-dummy-data/README.md)|Early demo during phase 1 with dummy data|
 |[![phase 1 example demo thumbnail](./examples/phase1-demo/upd-indicator-example-rules-thumbnail.png)](./examples/phase1-demo/README.md)|shows rule definitions, the steps I take to resolve each item and shows each dropping off the list as they are updated|
 
 ## Reference
