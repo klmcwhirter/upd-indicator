@@ -18,9 +18,11 @@ JSON files  <---poll--- upd-indicator ---> read-only display
 
 ### Extension
 
-The main deliverable will be a GNOME Extension written using [GJS](https://gjs.guide/extensions/development/creating.html).
+The main deliverable is a [GNOME Extension](../upd-indicator@for-many/) written using [GJS](https://gjs.guide/extensions/development/creating.html).
 
 Various Javascript related tools (e.g., pnpm, eslint, etc.) will be utilized to enable the development process.
+
+Ancillary delivery is a reference implementation of a [monitor program](../upd_monitor/README.md) written in Python.
 
 ### Monitor Program
 
@@ -116,6 +118,24 @@ $ cpython-clone-behind.sh
 $ echo $?
 0
 ```
+
+### Use `jq` to Validate JSON
+
+_Note that `jq` is used to validate the json. It is installed with `brew`. This is an incredibly helpful technique while writing rule scripts!_
+
+```
+# note no quotes surrounding name - a common mistake (when bouncing between JSON, Javascript and Python)
+echo '[{ name: "malformed json","status":"updates" }]' | jq -cM .
+
+# which will result in something like this:
+jq: parse error: Invalid numeric literal at line 1, column 8
+
+# once it is fixed ...
+echo '[{ "name": "well formed json","status":"updates" }]' | jq -cM .
+[{"name":"well formed json","status":"updates"}]
+```
+
+_See [example scripts](../examples/phase1-demo/README.md#scripts)._
 
 ### Class That Receives the Output
 
