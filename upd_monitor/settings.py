@@ -18,8 +18,12 @@ def from_settings(settings: Gio.Settings = None) -> dict:
             'rate': settings.get_int('monitor-rate'),
             'location': settings.get_string('monitor-location'),
         },
+
         'blink': {
             'rate': settings.get_int('blink-rate'),
+        },
+
+        'dnd': {
             'default': settings.get_boolean('dnd-default'),
         },
 

@@ -18,6 +18,46 @@ Once the prerequisites have been met (namely, locally compile cpython 3.14 with 
 
 It expects that `pnpm run local:install` has been executed so that the gsettings have been compiled and installed, and the `~/.local/bin/upd_monitor.sh` symlink has been established.
 
+```
+upd_monitor.sh list -s
+```
+
+This should display the gsettings in place.
+
+```
+{'monitor': {'rate': 900000, 'location': '/run/user/1000/upd-indicator/updates'},
+ 'blink': {'rate': 5000},
+ 'dnd': {'default': False},
+ 'icons': {'ind-green': 'selection-mode-symbolic',
+           'ind-updates': 'software-update-available-symbolic'},
+ 'colors': {'ind-green': 'lightgreen',
+            'ind-normal': 'white',
+            'ind-blink': 'cornflowerblue',
+            'ind-dnd': 'gray',
+            'dnd-label-on': 'red',
+            'dnd-label-off': 'white',
+            'menu-item-name': 'lightgray',
+            'menu-item-status': 'aquamarine',
+            'menu-item-extra': 'cornflowerblue'},
+ 'text': {'no-upd-avail': 'No Updates Available',
+          'no-upd-status': 'Everything is up to date.',
+          'toggle-dnd': 'Toggle Do Not Disturb.'},
+ 'rules': [{'name': 'bluefin',
+            'description': 'check if there are updates to bluefin via rpm-ostree',
+            'enabled': True,
+            'command': 'rpm-ostree-update-check.sh',
+            'notErrorCode': 0},
+           {'name': 'cpython fork behind',
+            'description': 'check if there are missing commits in my cpython fork',
+            'enabled': True,
+            'command': 'cpython-clone-behind.sh',
+            'notErrorCode': 0},
+           {'name': 'fedora-python-dx',
+            'description': 'check if there are updates to fedora-python-dx',
+            'enabled': True,
+            'command': 'fedora-python-dx-has-updates.sh',
+            'notErrorCode': 0}]}
+```
 
 ## References
 - https://pygobject.gnome.org/getting_started.html#fedora-logo-fedora
