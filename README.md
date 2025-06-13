@@ -20,7 +20,7 @@ Have a favorite web service you monitor? `curl` it!
 
 Tracking a channel on YouTube? If you can write a script to recognize new videos - do it!
 
-Have some custom `systemd` units for maintenance? Just send a D-Bus message.
+Have some custom `systemd` units for maintenance? Just add an `echo` of [well-defined JSON](./docs/architecture-desgn.md#passing-json-out-of-rule-monitoring-command-scripts) to a file at a location YOU choose.
 
 That should be all you need to define a monitoring rule that will cause an indicator to show when there is something that needs your attention.
 
