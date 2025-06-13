@@ -24,7 +24,7 @@ See below for links to the individual artifacts.
 _Note that `jq` is used to validate the json. It is installed with `brew`. This is an incredibly helpful technique while writing rule scripts!_
 
 ```
-# note no quotes surrounding name - a common mistake
+# note no quotes surrounding name - a common mistake (when bouncing between JSON, Javascript and Python)
 echo '[{ name: "malformed json","status":"updates" }]' | jq -cM .
 
 # which will result in something like this:
