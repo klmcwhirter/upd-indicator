@@ -69,10 +69,13 @@ export class UpdatesMonitor extends EventEmitter {
             if (updates.length === 0) {
                 this.blinkInterval.disable();
                 this.emit('icon-reset');
+            } else {
+                this.emit('set-next-poll');
             }
         }
         else if (updates.length > 0) {
             debugLog(`${this.displayName} - _monitorAction: found updates`);
+            this.emit('set-next-poll');
             this.blinkInterval.enable();
         }
     }
