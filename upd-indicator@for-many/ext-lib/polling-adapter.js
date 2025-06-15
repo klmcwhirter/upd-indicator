@@ -45,7 +45,7 @@ export function pollingLocationAdapter(location, textDecoder = new TextDecoder()
         const strs = [];
         for (const fileInfo of iter) {
             const name = fileInfo.get_name();
-            const path = `${location}/${name}`;
+            const path = GLib.build_filenamev([location, name]);
 
             // validate type, file ext is json
             if (fileInfo.get_file_type() != Gio.FileType.REGULAR) {

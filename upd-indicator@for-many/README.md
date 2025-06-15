@@ -18,7 +18,7 @@ Also I found that Ptyxis is painfully slow to start in the nested Wayland sessio
 
 Steps:
 
-- in the current session - `pnpm run local:install`; this copies the needed stuff to `~/.local/share/gnome-shell/extensions/`
+- in the current session - `pnpm run dev:install`; this copies the needed stuff to `~/.local/share/gnome-shell/extensions/`
 - next, `pnpm run nested`; this will open the nested session in a window
 - in the nested session open a terminal - I use Foot as I mentioned.
 - in the nested terminal session cd to the dir where you cloned, and execute `pnpm run enable` once the session has initialized.

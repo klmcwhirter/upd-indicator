@@ -105,6 +105,7 @@ class UpdatesMenu extends PanelMenu.Button {
         this.monitor.connect('icon-reset', () => this.iconReset());
         this.monitor.connect('dnd-clear', () => { this.doNotDisturb = false; this._setColors(); });
         this.monitor.connect('dnd-set', () => { this.doNotDisturb = true; this._setColors(); });
+        this.monitor.connect('set-next-poll', () => { this.nextPollItem.label.set_text(this.nextPoll); });
         this.monitor.connect('updates-list-updated', () => this._rebuildDisplay());
     }
 
@@ -126,6 +127,8 @@ class UpdatesMenu extends PanelMenu.Button {
                 this.blinkStateIsNormal ? 'ind-normal' : 'ind-blink';
     }
 
+    get nextPoll() { return `Next Poll: ${(new Date(Date.now() + this.ctx.monitorRate)).toLocaleString()}`; }
+
     _create() {
         this.indicatorIcon.icon_name = this.iconName;
 
@@ -135,6 +138,11 @@ class UpdatesMenu extends PanelMenu.Button {
             this.iconReset();
         });
         this.menu.addMenuItem(this.dnd);
+
+        this.menu.addMenuItem(new PopupMenu.PopupSeparatorMenuItem());
+
+        this.nextPollItem = new PopupMenu.PopupMenuItem(this.nextPoll, { reactive: false });
+        this.menu.addMenuItem(this.nextPollItem);
 
         this.menu.addMenuItem(new PopupMenu.PopupSeparatorMenuItem());
 
