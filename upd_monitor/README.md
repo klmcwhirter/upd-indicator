@@ -51,5 +51,4 @@ But, the intention is that `upd_monitor` be orchestrated via [`systemd` units](.
 
 ## References
 - https://pygobject.gnome.org/getting_started.html#fedora-logo-fedora
-- https://github.com/klmcwhirter/oci-shared-images/
-
+- https://github.com/klmcwhirter/oci-shared-images#readme
