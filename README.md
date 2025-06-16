@@ -88,6 +88,7 @@ _Also see [docs/](./docs/README.md) for details._
 - 2025-06-07 Added pollingRuleAdapter, CompositeRuleAdapter class and demos - completed phase 1 ! Started phase 2 design
 - 2025-06-12 Added upd_indicator Python program to monitor CLI commands and place json files in `monitor-location`; revised `upd-indicator` extension to poll that dir for `json` files. _See [#22](https://github.com/klmcwhirter/upd-indicator/issues/22)_
 - 2025-06-13 Renamed upd_indicator to upd_monitor; added reference systemd units to orchestrate its invocation
+- 2025-06-15 Enhanced local install feature; added settings import from [`settings.json`](./examples/settings.json) file; change settings schema to store path to the installed [`rules.json`](./examples/rules.json)
 
 ## Demos / Examples
 
@@ -95,6 +96,10 @@ _Also see [docs/](./docs/README.md) for details._
 | --- | --- |
 |[![phase 1 early demo with dummy data](./examples/phase1-dummy-data/phase1-with-dummy-data-thumbnail.png)](./examples/phase1-dummy-data/README.md)|Early demo during phase 1 with dummy data|
 |[![phase 1 example demo thumbnail](./examples/phase1-demo/upd-indicator-example-rules-thumbnail.png)](./examples/phase1-demo/README.md)|shows rule definitions, the steps I take to resolve each item and shows each dropping off the list as they are updated|
+|[`rules.json`](./examples/rules.json)|example rule.json file|
+|[`settings.json`](./examples/settings.json)|example settings.json file|
+|[`upd-indicator-monitor.service`](./systemd/upd-indicator-monitor.service)|sample upd-indicator-monitor.service systemd unit|
+|[`upd-indicator-monitor.timer`](./systemd/upd-indicator-monitor.timer)|sample upd-indicator-monitor.timer systemd unit|
 
 ## Reference
 - https://gjs.guide/
