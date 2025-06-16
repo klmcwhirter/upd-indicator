@@ -1,4 +1,5 @@
 import glob
+import json
 import logging
 import os
 from contextlib import contextmanager
@@ -37,6 +38,21 @@ def clean_files(ctx: AppContext) -> int:
 
 
 @log_entry_exit
+def import_settings_file(ctx: AppContext) -> int:
+    rc = 0
+    try:
+        settings = None
+        with open(ctx.import_settings_file, 'r') as jf:
+            settings = json.load(jf)
+
+            ctx.settings = settings
+    except Exception as err:
+        logging.error(err)
+        rc = 255
+    return rc
+
+
+@log_entry_exit
 def list_files(ctx: AppContext) -> int:
     '''Given the config file in force, list the images to create'''
     logging.debug(f'monitor_location={ctx.monitor_location}')
@@ -44,6 +60,12 @@ def list_files(ctx: AppContext) -> int:
     for f in glob.iglob(f'{ctx.monitor_location}/*.json'):
         print(f'{f}')
 
+    return 0
+
+
+@log_entry_exit
+def list_all_rules(ctx: AppContext) -> int:
+    pprint(ctx.rules, width=90, compact=False, sort_dicts=False)
     return 0
 
 
@@ -93,15 +115,23 @@ def run_steps(ctx: AppContext) -> int:
     if not os.path.exists(ctx.monitor_location):
         os.makedirs(ctx.monitor_location, exist_ok=True)
 
-    if ctx.verb == 'list':
+    if ctx.verb == 'clean':
+        rc = clean_files(ctx=ctx)
+    elif ctx.verb == 'import':
+        rc = import_settings_file(ctx=ctx)
+    elif ctx.verb == 'list':
         if ctx.list_enabled:
             rc = list_rules_enabled(ctx=ctx)
+        elif ctx.list_all:
+            rc = list_all_rules(ctx=ctx)
         elif ctx.list_files:
             rc = list_files(ctx=ctx)
         elif ctx.list_settings:
             rc = list_settings(ctx=ctx)
-    elif ctx.verb == 'clean':
-        rc = clean_files(ctx=ctx)
-    else:
+    elif ctx.verb == 'process':
         rc = process(ctx=ctx)
+    else:
+        print(f"verb '{ctx.verb}' is not supported")
+        rc = 2
+
     return rc

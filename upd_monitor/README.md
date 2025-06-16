@@ -42,21 +42,7 @@ This should display the gsettings in place.
  'text': {'no-upd-avail': 'No Updates Available',
           'no-upd-status': 'Everything is up to date.',
           'toggle-dnd': 'Toggle Do Not Disturb.'},
- 'rules': [{'name': 'bluefin',
-            'description': 'check if there are updates to bluefin via rpm-ostree',
-            'enabled': True,
-            'command': 'rpm-ostree-update-check.sh',
-            'notErrorCode': 0},
-           {'name': 'cpython fork behind',
-            'description': 'check if there are missing commits in my cpython fork',
-            'enabled': True,
-            'command': 'cpython-clone-behind.sh',
-            'notErrorCode': 0},
-           {'name': 'fedora-python-dx',
-            'description': 'check if there are updates to fedora-python-dx',
-            'enabled': True,
-            'command': 'fedora-python-dx-has-updates.sh',
-            'notErrorCode': 0}]}
+ 'rules-path': '/var/home/klmcw/.local/share/upd-monitor/rules.json'}
 ```
 
 ## Systemd

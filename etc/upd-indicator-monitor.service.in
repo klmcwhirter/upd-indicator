@@ -3,7 +3,7 @@ Description=Monitor upd-indicator rules for updates
 After=gnome-session.target
 
 [Service]
-ExecStart=/var/home/klmcw/.local/share/upd-indicator/upd_monitor.sh process -v
+ExecStart=~UPD_MONITOR_HOME~/upd_monitor.sh process -v
 
 [Install]
 WantedBy=upd-indicator-monitor.timer

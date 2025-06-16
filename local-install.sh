@@ -1,5 +1,9 @@
 #!/bin/sh
 #*----------------------------------------------------------------------------*
+#* Name: local-install.sh
+#*
+#* Install components locally.
+#* 
 #*----------------------------------------------------------------------------*
 
 root=$(realpath $(dirname $0))
@@ -62,9 +66,9 @@ function install_units
     echo_eval mkdir -p ${cfg_dir}
     
     echo "install ${service}"
-    cat systemd/${service} | sed "s?~UPD_MONITOR_HOME~?${UPD_MONITOR_HOME}?g" >${cfg_dir}/${service}
+    cat etc/${service}.in | sed "s?~UPD_MONITOR_HOME~?${UPD_MONITOR_HOME}?g" >${cfg_dir}/${service}
 
-    echo_eval install systemd/${timer} ${cfg_dir}
+    echo_eval install etc/${timer} ${cfg_dir}
 
     echo_eval systemctl --user enable ${timer}
     echo_eval systemctl --user start ${timer}
@@ -73,14 +77,21 @@ function install_units
 #*----------------------------------------------------------------------------*
 function install_pgm
 {
-  echo_eval pdm run distclean
   echo_eval rm -fr ${UPD_MONITOR_HOME}
   echo_eval install -d ${UPD_MONITOR_HOME}
+  
+  echo_eval pdm run distclean
   echo_eval cp -r upd_monitor/ ${UPD_MONITOR_HOME}/
-  # echo_eval rm -f ~/.local/bin/upd_monitor.sh
+  
   echo install upd_monitor.sh ${UPD_MONITOR_HOME}/
   cat upd_monitor.sh | sed "s?~UPD_MONITOR_HOME~?${UPD_MONITOR_HOME}?g" >${UPD_MONITOR_HOME}/upd_monitor.sh
   chmod +x ${UPD_MONITOR_HOME}/upd_monitor.sh
+
+  echo_eval cp etc/rules.json ${UPD_MONITOR_HOME}
+  echo install settings.json ${UPD_MONITOR_HOME}/
+  cat etc/settings.json.in | sed "s?~UPD_MONITOR_HOME~?${UPD_MONITOR_HOME}?g;s?~UID~?${UID}?g" >${UPD_MONITOR_HOME}/settings.json
+
+  ./upd_monitor.sh import -j ${UPD_MONITOR_HOME}/settings.json -v
 }
 #*----------------------------------------------------------------------------*
 
