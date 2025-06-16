@@ -1,4 +1,3 @@
-import { MonitorRule } from './monitor-rule.js';
 
 export function from_settings(settings) {
     const ctx = {
@@ -36,8 +35,6 @@ export function from_settings(settings) {
             'no-upd-status': settings.get_string('text-no-upd-status'),
             'toggle-dnd': settings.get_string('text-toggle-dnd'),
         },
-
-        rules: JSON.parse(settings.get_string('rules-list')).map(r => new MonitorRule(r))
     };
     return ctx;
 }

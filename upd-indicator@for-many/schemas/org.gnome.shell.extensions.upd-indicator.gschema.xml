@@ -27,7 +27,6 @@
       <description>Should Do Not Disturb be enabled at startup?</description>
     </key>
 
-
     <key type="s" name="icon-ind-green">
       <default>"selection-mode-symbolic"</default>
       <summary>Icon Indicator Green</summary>
@@ -113,14 +112,10 @@
       <description>Change to text to use for button label for toggle do not disturb.</description>
     </key>
 
-    <key type="s" name="rules-list">
-      <default>"[
-      {\"name\":\"bluefin\",\"description\":\"check if there are updates to bluefin via rpm-ostree\",\"enabled\":true,\"command\":\"rpm-ostree-update-check.sh\",\"notErrorCode\":0},
-      {\"name\":\"cpython fork behind\",\"description\":\"check if there are missing commits in my cpython fork\",\"enabled\":true,\"command\":\"cpython-clone-behind.sh\",\"notErrorCode\":0},
-      {\"name\":\"fedora-python-dx\",\"description\":\"check if there are updates to fedora-python-dx\",\"enabled\":true,\"command\":\"fedora-python-dx-has-updates.sh\",\"notErrorCode\":0}
-      ]"</default>
-      <summary>Rules as a JSON array</summary>
-      <description>Use the provided editor to manage the list of rules.</description>
+    <key type="s" name="rules-path">
+      <default>"rules.json"</default>
+      <summary>Path to a file with rules as a JSON array</summary>
+      <description>Edit the rules.json file to manage the list of rules.</description>
     </key>
 
   </schema>

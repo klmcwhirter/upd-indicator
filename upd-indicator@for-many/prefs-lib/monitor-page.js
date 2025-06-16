@@ -8,17 +8,10 @@ import { gettext as _ } from 'resource:///org/gnome/Shell/Extensions/js/extensio
 // Create the Monitor page
 export const UpdIndicatorMonitorPage = GObject.registerClass(class UpdIndicatorMonitorPage extends Adw.PreferencesPage {
     _init(metadata) {
-        if (parseInt(Config.PACKAGE_VERSION) >= 46) {
-            super._init({
-                title: _('Monitor'),
-                icon_name: 'help-about-symbolic',
-            });
-        } else {
-            super._init({
-                title: _('Monitor'),
-                icon_name: 'info-symbolic',
-            });
-        }
+        super._init({
+            title: _('Monitor'),
+            icon_name: 'software-update-available-symbolic',
+        });
 
         const EXTERNAL_LINK_ICON = 'adw-external-link-symbolic'
 
