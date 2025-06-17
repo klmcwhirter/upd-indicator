@@ -13,4 +13,6 @@ then
   source ~/.bashrc >/dev/null 2>&1
 fi
 
+export PATH=${PWD}/etc/scripts:$PATH
+
 GSETTINGS_SCHEMA_DIR=$HOME/.local/share/gnome-shell/extensions/upd-indicator@for-many/schemas python -m upd_monitor $@

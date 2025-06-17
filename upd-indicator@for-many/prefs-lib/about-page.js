@@ -8,22 +8,15 @@ import { gettext as _ } from 'resource:///org/gnome/Shell/Extensions/js/extensio
 // Create the About page
 export const UpdIndicatorAboutPage = GObject.registerClass(class UpdIndicatorAboutPage extends Adw.PreferencesPage {
     _init(metadata) {
-        if (parseInt(Config.PACKAGE_VERSION) >= 46) {
-            super._init({
-                title: _('About'),
-                icon_name: 'help-about-symbolic',
-            });
-        } else {
-            super._init({
-                title: _('About'),
-                icon_name: 'info-symbolic',
-            });
-        }
+        super._init({
+            title: _('About'),
+            icon_name: 'help-about-symbolic',
+        });
 
         const EXTERNAL_LINK_ICON = 'adw-external-link-symbolic'
 
-        const logoMenuLogoGroup = new Adw.PreferencesGroup();
-        const logoMenuBox = new Gtk.Box({
+        const aboutGroup = new Adw.PreferencesGroup();
+        const aboutBox = new Gtk.Box({
             orientation: Gtk.Orientation.VERTICAL,
             margin_top: 10,
             margin_bottom: 10,
@@ -38,13 +31,11 @@ export const UpdIndicatorAboutPage = GObject.registerClass(class UpdIndicatorAbo
             margin_bottom: 5,
         });
 
-        logoMenuBox.append(projectDescriptionLabel);
-        logoMenuLogoGroup.add(logoMenuBox);
+        aboutBox.append(projectDescriptionLabel);
+        aboutGroup.add(aboutBox);
 
-        this.add(logoMenuLogoGroup);
-        // -----------------------------------------------------------------------
+        this.add(aboutGroup);
 
-        // Extension/OS Info Group------------------------------------------------
         const extensionInfoGroup = new Adw.PreferencesGroup();
         const updIndVersionRow = new Adw.ActionRow({
             title: _('Update Indicator Version'),
@@ -105,7 +96,6 @@ export const UpdIndicatorAboutPage = GObject.registerClass(class UpdIndicatorAbo
 
         this.add(extensionInfoGroup);
 
-        // -----------------------------------------------------------------------
 
         const warrantyLabel = _('This program comes with absolutely no warranty.');
         const urlLabel = _('See the %sMIT License%s for details.').format('<a href="https://raw.githubusercontent.com/klmcwhirter/upd-indicator/refs/heads/main/LICENSE">', '</a>');

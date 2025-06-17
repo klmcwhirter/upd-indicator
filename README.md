@@ -2,11 +2,12 @@
 GNOME extension that provides indication that updates are available
 
 > [!IMPORTANT]
-> Before I even get started let me announce that I am looking for someone to fork and take over this project.
-> 
-> _I have other priorities that will always be placed higher than any software development work I do._
-> 
-> Let me know if you are interested so we can begin that transition.
+>
+> What I am providing in this repo is a sample implementation of some ideas.
+>
+> You should not think of this repo as code that you can clone and use as is. Your requirements are going to be different than mine. Be prepared to heavily modify or even rewrite what is here.
+>
+> The files herein are simply a sample implementation of the ideas presented below.
 
 ## Background
 
@@ -24,44 +25,9 @@ Have some custom `systemd` units for maintenance? Just add an `echo` of [well-de
 
 That should be all you need to define a monitoring rule that will cause an indicator to show when there is something that needs your attention.
 
-## Milestones
+## Installing the Extension
 
-- Phase 1 - prototype
-   - indicator of mode: Do Not Disturb, Updates available, All green
-   - monitoring logic rough draft
-   - do not disturb mode
-   - when the indicator is clicked some summary of the update will be displayed.
-   - start with hard coded dummy data
-   - monitor my `cpython-clone-behind.sh` script output for new commits.
-   
-This will be a proving ground for the more flexibile implementation in phase 2.
-
-I am pretty happy with the rough draft UI, though. Time to move to phase 2.
-
-Status: 👍
-
-- Phase 2 - add configuration for blinking rate and a "rule editor" so that the user can add their own rules based on what they care about.
-
-   The rules will have at least these properties (detailed design TBD):
-   - name
-   - enabled
-   - command to monitor
-   - expected response that means “updates available”
-   - comments to display with the output (might be reminder of the command to run, docs, etc.)
-   
-   The user will have the ability to disable / enable any rule individually. And add their own rules.
-   
-   The extension should be flexible enough to run on any linux system with GNOME.
-
-- Phase 2 themes:
-
-   * prefs definition and editor
-   * program written in Python to be executed via systemd
-   * example rules and scripts
-   * Documentation !
-
-
-Status: implementation
+_See [upd-indicator@for-many](./upd-indicator@for-many/README.md) for details._
 
 ## Running the Python program to monitor for updates
 
@@ -69,9 +35,7 @@ It is written in Python and uses `Gio.Settings` to retrieve the extensions prefs
 
 _See [upd_monitor](./upd_monitor/README.md) for details._
 
-## Running the Prototype
-
-_See [upd-indicator@for-many](./upd-indicator@for-many/README.md)._
+And, after install, it is scheduled with [systemd](./systemd/README.md).
 
 ## Approach
 
@@ -100,6 +64,7 @@ _Also see [docs/](./docs/README.md) for details._
 |[`settings.json`](./examples/settings.json)|example settings.json file|
 |[`upd-indicator-monitor.service`](./systemd/upd-indicator-monitor.service)|sample upd-indicator-monitor.service systemd unit|
 |[`upd-indicator-monitor.timer`](./systemd/upd-indicator-monitor.timer)|sample upd-indicator-monitor.timer systemd unit|
+|[`etc/scripts/`](./etc/scripts/)|this is where scripts (associated with your rules) are placed so they get installed|
 
 ## Reference
 - https://gjs.guide/

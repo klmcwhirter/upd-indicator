@@ -127,7 +127,7 @@ class UpdatesMenu extends PanelMenu.Button {
                 this.blinkStateIsNormal ? 'ind-normal' : 'ind-blink';
     }
 
-    get nextPoll() { return `Next Poll: ${(new Date(Date.now() + this.ctx.monitorRate)).toLocaleString()}`; }
+    get nextPoll() { return `${this.ctx.text['next-poll']}: ${(new Date(Date.now() + this.ctx.monitorRate)).toLocaleString()}`; }
 
     _create() {
         this.indicatorIcon.icon_name = this.iconName;
