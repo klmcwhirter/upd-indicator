@@ -8,6 +8,8 @@ then
   cd "${UPD_MONITOR_HOME}"
 
   source ~/.bashrc >/dev/null 2>&1
+
+  export PATH=${UPD_MONITOR_HOME}/scripts:$PATH
 fi
 
 GSETTINGS_SCHEMA_DIR=$HOME/.local/share/gnome-shell/extensions/upd-indicator@for-many/schemas python -m upd_monitor $@

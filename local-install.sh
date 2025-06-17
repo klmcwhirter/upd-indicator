@@ -82,9 +82,10 @@ function install_pgm
   
   echo_eval pdm run distclean
   echo_eval cp -r upd_monitor/ ${UPD_MONITOR_HOME}/
+  echo_eval cp -r etc/scripts/ ${UPD_MONITOR_HOME}/
   
   echo install upd_monitor.sh ${UPD_MONITOR_HOME}/
-  cat upd_monitor.sh | sed "s?~UPD_MONITOR_HOME~?${UPD_MONITOR_HOME}?g" >${UPD_MONITOR_HOME}/upd_monitor.sh
+  cat etc/upd_monitor.sh.in | sed "s?~UPD_MONITOR_HOME~?${UPD_MONITOR_HOME}?g" >${UPD_MONITOR_HOME}/upd_monitor.sh
   chmod +x ${UPD_MONITOR_HOME}/upd_monitor.sh
 
   echo_eval cp etc/rules.json ${UPD_MONITOR_HOME}

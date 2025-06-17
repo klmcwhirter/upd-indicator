@@ -4,7 +4,13 @@ A GNOME extension to display updates that need attention.
 
 _See [docs](../docs/README.md) for details._
 
-## Running the Extension
+## Installing the Extension
+
+- run `pnpm run local:install`
+- log out and back in (or reboot)
+- run `pnpm run enable` or Enable in Extension Manager
+
+## Running the Extension (development)
 
 The automation uses pnpm / npm. This is a JS project after all. While it is not strictly needed, that is what I am currently using.
 

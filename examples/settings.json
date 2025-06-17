@@ -25,6 +25,7 @@
         "menu-item-extra": "cornflowerblue"
     },
     "text": {
+        "next-poll": "Next Poll",
         "no-upd-avail": "No Updates Available",
         "no-upd-status": "Everything is up to date.",
         "toggle-dnd": "Toggle Do Not Disturb."

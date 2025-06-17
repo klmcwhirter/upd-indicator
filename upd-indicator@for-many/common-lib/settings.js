@@ -31,10 +31,13 @@ export function from_settings(settings) {
             'menu-item-extra': settings.get_string('color-label-menu-item-extra'),
         },
         text: {
+            'next-poll': settings.get_string('text-next-poll'),
             'no-upd-avail': settings.get_string('text-no-upd-avail'),
             'no-upd-status': settings.get_string('text-no-upd-status'),
             'toggle-dnd': settings.get_string('text-toggle-dnd'),
         },
+
+        'rules-path': settings.get_string('rules-path'),
     };
     return ctx;
 }

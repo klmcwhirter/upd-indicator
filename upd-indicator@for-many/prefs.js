@@ -4,7 +4,6 @@ import { ExtensionPreferences } from 'resource:///org/gnome/Shell/Extensions/js/
 
 import { debugLog } from './common-lib/log.js';
 import { UpdIndicatorAboutPage } from './prefs-lib/about-page.js';
-import { UpdIndicatorMonitorPage } from './prefs-lib/monitor-page.js';
 
 export default class UpdIndicatorPreferences extends ExtensionPreferences {
     /**
@@ -30,20 +29,5 @@ export default class UpdIndicatorPreferences extends ExtensionPreferences {
     fillPreferencesWindow(window) {
         const aboutPage = new UpdIndicatorAboutPage(this.metadata);
         window.add(aboutPage);
-        const monitorPage = new UpdIndicatorMonitorPage(this.metadata);
-        window.add(monitorPage);
-
-        // const group = new Adw.PreferencesGroup({
-        //     title: _('Appearance'),
-        //     description: _('Configure the appearance of the extension'),
-        // });
-        // page.add(group);
-
-        // // Create a new preferences row
-        // const row = new Adw.SwitchRow({
-        //     title: _('Show Indicator'),
-        //     subtitle: _('Whether to show the panel indicator'),
-        // });
-        // group.add(row);
     }
 }

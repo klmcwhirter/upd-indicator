@@ -6,13 +6,13 @@
     <key type="i" name="monitor-rate">
       <default>900000</default>
       <summary>Monitor Rate (ms)</summary>
-      <description>Change the Monitor Rate in milliseconds.</description>
+      <description>Change the rate at which the location is polled.</description>
     </key>
 
     <key type="s" name="monitor-location">
       <default>"/run/user/1000/upd-indicator/updates"</default>
       <summary>Monitor this path for updates as json files</summary>
-      <description>Change the Monitor location to use.</description>
+      <description>Change the location to look for update json files.</description>
     </key>
 
     <key type="i" name="blink-rate">
@@ -94,28 +94,34 @@
     </key>
 
 
+    <key type="s" name="text-next-poll">
+      <default>"Next Poll"</default>
+      <summary>Label Text Menu Item</summary>
+      <description>Change text to use in menu item label text.</description>
+    </key>
+
     <key type="s" name="text-no-upd-avail">
       <default>"No Updates Available"</default>
       <summary>Label Text Menu Item Name</summary>
-      <description>Change to text to use for menu item name label.</description>
+      <description>Change text to use for menu item name label.</description>
     </key>
 
     <key type="s" name="text-no-upd-status">
       <default>"Everything is up to date."</default>
       <summary>Label Text Menu Item Status</summary>
-      <description>Change to text to use for menu item status label.</description>
+      <description>Change text to use for menu item status label.</description>
     </key>
 
     <key type="s" name="text-toggle-dnd">
-      <default>"Toggle Do Not Disturb."</default>
+      <default>"Toggle Do Not Disturb"</default>
       <summary>Button Text Toggle Do Not Disturb</summary>
-      <description>Change to text to use for button label for toggle do not disturb.</description>
+      <description>Change text to use for button label for toggle do not disturb.</description>
     </key>
 
     <key type="s" name="rules-path">
       <default>"rules.json"</default>
       <summary>Path to a file with rules as a JSON array</summary>
-      <description>Edit the rules.json file to manage the list of rules.</description>
+      <description>Change the path to the rules.json file to configure the list of rules</description>
     </key>
 
   </schema>

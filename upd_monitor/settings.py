@@ -49,6 +49,7 @@ def from_settings(gsettings: Gio.Settings = None) -> dict:
         },
 
         'text': {
+            'next-poll': gsettings.get_string('text-next-poll'),
             'no-upd-avail': gsettings.get_string('text-no-upd-avail'),
             'no-upd-status': gsettings.get_string('text-no-upd-status'),
             'toggle-dnd': gsettings.get_string('text-toggle-dnd'),
@@ -87,6 +88,7 @@ def import_settings(settings: dict, gsettings: Gio.Settings = None):
     gsettings.set_string('color-label-menu-item-status', settings['colors']['menu-item-status'])
     gsettings.set_string('color-label-menu-item-extra', settings['colors']['menu-item-extra'])
 
+    gsettings.set_string('text-next-poll', settings['text']['next-poll'])
     gsettings.set_string('text-no-upd-avail', settings['text']['no-upd-avail'])
     gsettings.set_string('text-no-upd-status', settings['text']['no-upd-status'])
     gsettings.set_string('text-toggle-dnd', settings['text']['toggle-dnd'])
