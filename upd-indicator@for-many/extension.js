@@ -33,7 +33,6 @@ class UpdatesMenuItem extends PopupMenu.PopupBaseMenuItem {
             update: update,
             colors: colors
         });
-        // this.sensitive = false;
     }
 
     _init(_text, params) {
@@ -106,7 +105,7 @@ class UpdatesMenu extends PanelMenu.Button {
         this.monitor.connect('dnd-clear', () => { this.doNotDisturb = false; this._setColors(); });
         this.monitor.connect('dnd-set', () => { this.doNotDisturb = true; this._setColors(); });
         this.monitor.connect('set-next-poll', () => { this.nextPollItem.label.set_text(this.nextPoll); });
-        this.monitor.connect('updates-list-updated', () => this._rebuildDisplay());
+        this.monitor.connect('updates-list-updated', () => this._rebuildSection());
     }
 
     destroy() {
@@ -132,8 +131,8 @@ class UpdatesMenu extends PanelMenu.Button {
     _create() {
         this.indicatorIcon.icon_name = this.iconName;
 
-        this.dnd = new PopupMenu.PopupMenuItem(this.ctx.text['toggle-dnd']);
-        this.dnd.connect('activate', () => {
+        this.dnd = new PopupMenu.PopupSwitchMenuItem(this.ctx.text['toggle-dnd'], this.ctx.doNotDisturbAtStart);
+        this.dnd.connect('toggled', () => {
             this.monitor.toggleDoNotDisturb();
             this.iconReset();
         });
@@ -146,13 +145,24 @@ class UpdatesMenu extends PanelMenu.Button {
 
         this.menu.addMenuItem(new PopupMenu.PopupSeparatorMenuItem());
 
+        this._rebuildSection();
+    }
+
+    _rebuildSection() {
+        if (this.menuSection !== undefined) {
+            this.menuSection.removeAll();
+        } else {
+            this.menuSection = new PopupMenu.PopupMenuSection();
+            this.menu.addMenuItem(this.menuSection);
+        }
+
         const updatesList = this.monitor.updates();
         debugLog('UpdatesMenu._create: updatesList=', updatesList);
 
         if (updatesList.length > 0) {
             updatesList.forEach((u) => {
                 const updateItem = new UpdatesMenuItem(u, this.ctx.colors);
-                this.menu.addMenuItem(updateItem);
+                this.menuSection.addMenuItem(updateItem);
             });
         } else {
             const updateItem = new UpdatesMenuItem(
@@ -162,15 +172,10 @@ class UpdatesMenu extends PanelMenu.Button {
                 }),
                 this.ctx.colors
             );
-            this.menu.addMenuItem(updateItem);
+            this.menuSection.addMenuItem(updateItem);
         }
 
         this._setColors();
-    }
-
-    _rebuildDisplay() {
-        this.menu.removeAll();
-        this._create();
     }
 
     _setColors() {
@@ -191,8 +196,6 @@ class UpdatesMenu extends PanelMenu.Button {
 
     iconReset() {
         debugLog('iconReset: ');
-
-        // this.monitor.setUpdates([]);
 
         this.blinkStateIsNormal = true;
         this.iconBlink();

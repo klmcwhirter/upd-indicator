@@ -37,7 +37,7 @@ function install_ext
 
   echo_eval cp ../LICENSE .
 
-  echo_eval gnome-extensions pack --extra-source=ext-lib/ --extra-source=prefs-lib/ --extra-source=common-lib/ --extra-source=LICENSE --schema=schemas/org.gnome.shell.extensions.upd-indicator.gschema.xml --force
+  echo_eval gnome-extensions pack --extra-source=ext-lib/ --extra-source=common-lib/ --extra-source=LICENSE --schema=schemas/org.gnome.shell.extensions.upd-indicator.gschema.xml --force
   echo_eval gnome-extensions install upd-indicator@for-many.shell-extension.zip --force
 
   echo_eval popd
