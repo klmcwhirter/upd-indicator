@@ -1,0 +1,34 @@
+{
+    "monitor": {
+        "rate": 900000,
+        "location": "/run/user/1000/upd-indicator/updates"
+    },
+    "blink": {
+        "rate": 5000
+    },
+    "dnd": {
+        "default": false
+    },
+    "icons": {
+        "ind-green": "selection-mode-symbolic",
+        "ind-updates": "software-update-available-symbolic"
+    },
+    "colors": {
+        "ind-green": "lightgreen",
+        "ind-normal": "white",
+        "ind-blink": "cornflowerblue",
+        "ind-dnd": "gray",
+        "dnd-label-on": "red",
+        "dnd-label-off": "white",
+        "menu-item-name": "lightgray",
+        "menu-item-status": "aquamarine",
+        "menu-item-extra": "cornflowerblue"
+    },
+    "text": {
+        "next-poll": "Next Poll",
+        "no-upd-avail": "No Updates Available",
+        "no-upd-status": "Everything is up to date.",
+        "toggle-dnd": "Toggle Do Not Disturb."
+    },
+    "rules-path": "/var/home/klmcw/.local/share/upd-monitor/rules.json"
+}
