@@ -7,7 +7,7 @@
         "notErrorCode": 0
     },
     {
-        "name": "cpython fork behind",
+        "name": "cpython-clone-behind",
         "description": "check if there are missing commits in my cpython fork",
         "enabled": true,
         "command": "cpython-clone-behind.sh",

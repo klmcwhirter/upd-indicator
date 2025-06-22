@@ -4,7 +4,6 @@ UPD_MONITOR_HOME=~UPD_MONITOR_HOME~
 
 if [ -n "${UPD_MONITOR_HOME:-}" ]
 then
-  echo "GOING HOME"
   cd "${UPD_MONITOR_HOME}"
 
   source ~/.bashrc >/dev/null 2>&1
