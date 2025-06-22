@@ -55,6 +55,14 @@ class AppContext:
         return self.settings['monitor']['location']
 
     @property
+    def rule_args(self) -> list[str]:
+        return self.args.args
+
+    @property
+    def rule(self) -> str:
+        return self.args.rule
+
+    @property
     def skip_clean(self) -> bool:
         return self.args.skip_clean
 

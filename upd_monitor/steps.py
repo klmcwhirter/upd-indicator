@@ -54,7 +54,7 @@ def import_settings_file(ctx: AppContext) -> int:
 
 @log_entry_exit
 def list_files(ctx: AppContext) -> int:
-    '''Given the config file in force, list the images to create'''
+    '''list the updates files currently present'''
     logging.debug(f'monitor_location={ctx.monitor_location}')
 
     for f in glob.iglob(f'{ctx.monitor_location}/*.json'):
@@ -78,6 +78,32 @@ def list_rules_enabled(ctx: AppContext) -> int:
 @log_entry_exit
 def list_settings(ctx: AppContext) -> int:
     pprint(ctx.settings, width=90, compact=False, sort_dicts=False)
+    return 0
+
+
+@log_entry_exit
+def exec_rule(ctx: AppContext) -> int:
+    try:
+        rule = next(filter(lambda r: r.name == ctx.rule, ctx.rules))
+        logging.debug(f'found {rule}')
+
+        cmd = f'{rule.command} {' '.join(ctx.rule_args)}'.rstrip(' ')
+        logging.info(f'executing "{cmd}"')
+
+        proc = run_with_output(cmd=cmd)
+
+        if proc.stderr:
+            logging.warning(proc.stderr)
+
+        if proc.stdout:
+            print(proc.stdout)
+
+        if proc.returncode != rule.notErrorCode:
+            logging.error(f'rule "{rule.name}" exited with error code {proc.returncode}')
+
+    except StopIteration:
+        raise ValueError(f'rule {ctx.rule} unknown')
+
     return 0
 
 
@@ -128,6 +154,8 @@ def run_steps(ctx: AppContext) -> int:
             rc = list_files(ctx=ctx)
         elif ctx.list_settings:
             rc = list_settings(ctx=ctx)
+    elif ctx.verb == 'exec':
+        rc = exec_rule(ctx=ctx)
     elif ctx.verb == 'process':
         rc = process(ctx=ctx)
     else:
