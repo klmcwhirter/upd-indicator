@@ -8,7 +8,7 @@ from upd_monitor.models import AppContext
 def parse_args(args: list[str]) -> AppContext:
     parser = argparse.ArgumentParser()
 
-    verbs = parser.add_subparsers(title='verbs', required=True, dest='verb', metavar='(list | process | clean | import)')
+    verbs = parser.add_subparsers(title='verbs', required=True, dest='verb', metavar='(list | process | exec | clean | import)')
 
     ls_desc = 'List information about the configuration or the system'
     ls = verbs.add_parser('list',
@@ -32,6 +32,18 @@ def parse_args(args: list[str]) -> AppContext:
                       help='Skip the removal of json updates file before starting')
 
     proc.add_argument('-v', '--verbose', default=False, action='store_true', help='enable verbose output')
+
+    exec_desc = 'Execute an update rule'
+    exec = verbs.add_parser('exec',
+                            description=exec_desc,
+                            help=exec_desc,
+                            formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    exec.add_argument('rule',
+                      help='the rule to execute')
+    exec.add_argument('args', nargs='*',
+                      help='Additional args to pass to rule command')
+
+    exec.add_argument('-v', '--verbose', default=False, action='store_true', help='enable verbose output')
 
     clean_desc = 'Clean up json files'
     clean = verbs.add_parser('clean',

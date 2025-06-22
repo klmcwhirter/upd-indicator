@@ -17,6 +17,7 @@ def cmd_with_output(cmd: str, verbose=True) -> str:
 
     return subprocess.check_output(cmd, shell=True, text=True)
 
+
 def run_with_output(cmd: str, verbose=True) -> subprocess.CompletedProcess[str]:
     if verbose:
         logging.info(cmd)
