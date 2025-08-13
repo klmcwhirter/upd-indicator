@@ -14,6 +14,13 @@
         "notErrorCode": 0
     },
     {
+        "name": "dns-health",
+        "description": "check if dns servers need attention",
+        "enabled": true,
+        "command": "dns-health.py",
+        "notErrorCode": 0
+    },
+    {
         "name": "fedora-python-dx",
         "description": "check if there are updates to fedora-python-dx",
         "enabled": true,
@@ -23,7 +30,7 @@
     {
         "name": "pdm",
         "description": "check if there are updates for pdm",
-        "enabled": true,
+        "enabled": false,
         "command": "pdm-has-updates.sh",
         "notErrorCode": 0
     }

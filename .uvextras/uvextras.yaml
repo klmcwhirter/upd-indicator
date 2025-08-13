@@ -1,0 +1,24 @@
+scripts:
+
+  - name: enable-dev
+    is-local: false
+    options:
+      pkgs: autopep8 flake8 mypy
+
+  - name: create
+    is-local: false
+    options:
+      python: $HOME/opt/cpython/bin/python3.14
+      with-system:
+
+  - name: gitignore
+    is-local: false
+    options:
+      features: python
+      addons: distrobox-export,.pdm-python
+
+  - name: start
+    desc: app entrypoint
+    use-python: false
+    cmd: uv run python -m ocisictl
+    is-local: true

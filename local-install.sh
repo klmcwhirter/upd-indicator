@@ -80,7 +80,7 @@ function install_pgm
   echo_eval rm -fr ${UPD_MONITOR_HOME}
   echo_eval install -d ${UPD_MONITOR_HOME}
   
-  echo_eval pdm run distclean
+  echo_eval uvextras run allclean
   echo_eval cp -r upd_monitor/ ${UPD_MONITOR_HOME}/
   echo_eval cp -r etc/scripts/ ${UPD_MONITOR_HOME}/
   
