@@ -4,6 +4,7 @@ Description=Timer for upd-indicator-monitor.service
 [Timer]
 RandomizedDelaySec=10m
 OnBootSec=2m
+OnActiveSec=2m
 OnCalendar=*-*-* 1,3,5,7,9,11,13,15,17,19,21,23:00:00
 Persistent=true
 
