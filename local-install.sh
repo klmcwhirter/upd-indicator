@@ -12,6 +12,7 @@ INCLUDE_UNITS=""
 [ "$1" = "--include-systemd-units" ] && INCLUDE_UNITS="1"
 
 [ "$1" = "--ext-only" ] && EXT_ONLY="1"
+[ "$1" = "--pgm-only" ] && PGM_ONLY="1"
 
 UPD_MONITOR_HOME=$HOME/.local/share/upd-monitor
 
@@ -101,6 +102,9 @@ then
   pnpm run disable # make sure it is not running before starting nested session
 
   echo_eval install_ext
+elif [ "${PGM_ONLY}" = "1" ]
+then
+  echo_eval install_pgm
 else
   echo_eval install_ext
 

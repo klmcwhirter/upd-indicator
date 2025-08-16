@@ -33,5 +33,12 @@
         "enabled": false,
         "command": "pdm-has-updates.sh",
         "notErrorCode": 0
+    },
+    {
+        "name": "pi-cluster-health",
+        "description": "check if the pi cluster is healthy",
+        "enabled": true,
+        "command": "pi-cluster-health.py",
+        "notErrorCode": 0
     }
 ]
