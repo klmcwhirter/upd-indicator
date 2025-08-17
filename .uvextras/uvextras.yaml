@@ -7,8 +7,9 @@ scripts:
 
   - name: create
     is-local: false
+    env:
+      UV_MANAGED_PYTHON: 0
     options:
-      python: $HOME/opt/cpython/bin/python3.14
       with-system:
 
   - name: gitignore
@@ -21,4 +22,22 @@ scripts:
     desc: app entrypoint
     use-python: false
     cmd: uv run python -m ocisictl
+    is-local: true
+
+  - name: install
+    desc: install all components
+    use-python: false
+    cmd: ./local-install.sh --include-systemd-units
+    is-local: true
+
+  - name: install-ext
+    desc: install upd-indicator@for-many GNOME extension
+    use-python: false
+    cmd: ./local-install.sh --ext-only
+    is-local: true
+
+  - name: install-pgm
+    desc: install upd_monitor
+    use-python: false
+    cmd: ./local-install.sh --pgm-only
     is-local: true

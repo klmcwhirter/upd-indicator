@@ -4,11 +4,12 @@
 pi-cluster-health.py
 '''
 
+import os
 import subprocess
 import sys
 
 
-def pi_cluster_health(*, hosts: list[str], cmd: str, msg: str, verbose=False) -> int:
+def pi_cluster_health(*, hosts: list[str], cmd: str, msg: str, verbose=False) -> str:
     '''
     Executes a command on a list of hosts via SSH and reports their health.
 
@@ -19,8 +20,8 @@ def pi_cluster_health(*, hosts: list[str], cmd: str, msg: str, verbose=False) ->
         Defaults to False.
     :return: int - subprocess.CompletedProcess.returncode
     '''
-    rc = 0
 
+    rc = ''
     lines: list[str] = []
 
     for host in hosts:
@@ -39,36 +40,38 @@ def pi_cluster_health(*, hosts: list[str], cmd: str, msg: str, verbose=False) ->
         )
 
         if proc.returncode != 0:
-            rc |= proc.returncode
+            if verbose:
+                print(f'cmd exited with {proc.returncode=}', flush=True)
             lines.append(f'{{ "{host}": "{msg}" }}, ')
 
         if verbose:
             print(proc.stdout, flush=True)
 
-    if not verbose:
-        print(f'{"\n".join(lines)}', end='', flush=True)
+    if not verbose and len(lines) > 0:
+        rc = f'[{"\n".join(lines)}]'
 
     return rc
 
 
-def main(*, verbose=False) -> int:
+def main(*, verbose=False) -> None:
     hosts = ['pi2.lan', 'pi3.lan']
 
+    out = pi_cluster_health(hosts=hosts, cmd='sudo /home/klmcw/.local/bin/check-4-upds.sh', msg='Needs Attention', verbose=verbose)
     if not verbose:
-        print('[', end='', flush=True)
-
-    rc = pi_cluster_health(hosts=hosts, cmd='sudo /home/klmcw/.local/bin/check-4-upds.sh', msg='Needs Attention', verbose=verbose)
+        # steps.py#process creates a file if len(proc.stdout) > 0 - so prevent even \n output if nothing to report
+        if len(out) > 0:
+            print(out, flush=True)
 
     if verbose:
         _ = pi_cluster_health(hosts=hosts, cmd='ls -l /var/log/apt/term.log', msg='Log long listing', verbose=verbose)
-    else:
-        print(']', end='', flush=True)
-
-    return rc
 
 
 if __name__ == '__main__':
     verbose = '-v' in sys.argv[1:]
 
-    rc = main(verbose=verbose)
-    sys.exit(rc)
+    rc = 0
+    try:
+        rc = main(verbose=verbose)
+    except Exception as e:
+        print(e, file=os.stderr, flush=True)
+        sys.exit(2)

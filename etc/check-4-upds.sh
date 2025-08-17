@@ -24,4 +24,4 @@ fi
 
 # If we reach this point, something has gone wrong
 echo "Error: Failed to check for updates"
-exit 1
+exit 2
