@@ -93,6 +93,9 @@ function install_pgm
   echo install settings.json ${UPD_MONITOR_HOME}/
   cat etc/settings.json.in | sed "s?~UPD_MONITOR_HOME~?${UPD_MONITOR_HOME}?g;s?~UID~?${UID}?g" >${UPD_MONITOR_HOME}/settings.json
 
+  echo uvextras run create
+  uvextras run create
+
   ./upd_monitor.sh import -j ${UPD_MONITOR_HOME}/settings.json -v
 }
 #*----------------------------------------------------------------------------*
