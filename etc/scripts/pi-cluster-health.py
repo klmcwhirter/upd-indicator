@@ -42,13 +42,13 @@ def pi_cluster_health(*, hosts: list[str], cmd: str, msg: str, verbose=False) ->
         if proc.returncode != 0:
             if verbose:
                 print(f'cmd exited with {proc.returncode=}', flush=True)
-            lines.append(f'{{ "{host}": "{msg}" }}, ')
+            lines.append(f'{{ "name": "{host}", "status": "{msg}" }}')
 
         if verbose:
             print(proc.stdout, flush=True)
 
     if not verbose and len(lines) > 0:
-        rc = f'[{"\n".join(lines)}]'
+        rc = f'[{",".join(lines)}]'
 
     return rc
 
