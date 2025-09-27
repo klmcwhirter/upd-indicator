@@ -9,6 +9,7 @@ scripts:
     is-local: false
     env:
       UV_MANAGED_PYTHON: 0
+      UV_PYTHON: /var/home/klmcw/opt/cpython/bin/python3.14
     options:
       with-system:
 

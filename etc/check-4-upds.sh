@@ -11,14 +11,24 @@ if [ "$(id -u)" -ne 0 ]; then
 fi
 
 # Update the package list
-apt update -qy >/dev/null
+apt-get update -qy >/dev/null
+
+if [ "$1" = "-v" ]; then
+  apt list --upgradeable -a
+fi
+
+# ----------------- this spelling diff is intentional -----v
+updates=$(apt list --upgradeable 2>/dev/null | grep -- 'upgradable' -)
+# echo "updates=${updates}"
 
 # Check for available updates
-if ! apt list --upgradable; then
-  echo "Error: Updates are available"
+if [ "${updates}" != "" ]; then
+  echo "Updates are available"
+  echo
   exit 1
 else
   echo "No updates available"
+  echo
   exit 0
 fi
 

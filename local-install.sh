@@ -96,6 +96,13 @@ function install_pgm
   echo uvextras run create
   uvextras run create
 
+  echo install check-4-upds.sh to cluster
+  for h in pi1.lan pi2.lan pi3.lan
+  do
+    echo scp -p ./etc/check-4-upds.sh ${h}:/home/klmcw/.local/bin/check-4-upds.sh
+    scp -p ./etc/check-4-upds.sh ${h}:/home/klmcw/.local/bin/check-4-upds.sh
+  done
+
   ./upd_monitor.sh import -j ${UPD_MONITOR_HOME}/settings.json -v
 }
 #*----------------------------------------------------------------------------*
