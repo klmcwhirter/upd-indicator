@@ -28,13 +28,6 @@
         "notErrorCode": 0
     },
     {
-        "name": "pdm",
-        "description": "check if there are updates for pdm",
-        "enabled": false,
-        "command": "pdm-has-updates.sh",
-        "notErrorCode": 0
-    },
-    {
         "name": "pi-cluster-health",
         "description": "check if the pi cluster is healthy",
         "enabled": true,

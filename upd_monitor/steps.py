@@ -1,13 +1,15 @@
+import concurrent.futures
 import glob
 import json
 import logging
+import multiprocessing as mp
 import os
 from contextlib import contextmanager
 from pathlib import Path
 from pprint import pprint
 from typing import Generator
 
-from upd_monitor.models import AppContext
+from upd_monitor.models import AppContext, WorkerContext
 from upd_monitor.utils import log_entry_exit, run_with_output
 
 
@@ -107,30 +109,52 @@ def exec_rule(ctx: AppContext) -> int:
     return 0
 
 
+def process_rule(wctx: WorkerContext) -> None:
+    rule = wctx.rule
+
+    logging.debug(f'{wctx.name}: Processing {rule.file_name} ...')
+
+    proc = run_with_output(rule.command)
+
+    if proc.stderr:
+        logging.warning(f'{wctx.name}: {proc.stderr}')
+
+    if proc.returncode != rule.notErrorCode:
+        logging.error(f'{wctx.name}: rule "{rule.name}" exited with error code {proc.returncode}')
+    elif proc.stdout and len(proc.stdout) > 0:
+        file_name = f'{wctx.dir}/{rule.file_name}.json'
+        with open(file_name, 'w') as f:
+            f.write(proc.stdout)
+
+    logging.debug(f'{wctx.name}: Processing {rule.file_name} ... done')
+
+
 @log_entry_exit
 def process(ctx: AppContext) -> int:
+    mp.set_start_method('spawn')
+
     rc = 0
     if not ctx.skip_clean:
         rc = clean_files(ctx=ctx)
     else:
         logging.warning(f'Skipping clean step - clean={ctx.skip_clean}')
 
-    for rule in ctx.rules_enabled:
-        logging.info(f'Processing {rule.file_name} ...')
+    _worker_contexts = [
+        WorkerContext(idx=idx, rule=rule, dir=ctx.monitor_location)
+        for idx, rule in enumerate(ctx.rules_enabled)
+    ]
 
-        proc = run_with_output(rule.command)
+    with concurrent.futures.ProcessPoolExecutor(initializer=ctx._setup_logging) as executor:
+        futures = {
+            executor.submit(process_rule, wctx=worker_ctx): worker_ctx
+            for worker_ctx in _worker_contexts
+        }
 
-        if proc.stderr:
-            logging.warning(proc.stderr)
+        for future in concurrent.futures.as_completed(futures):
+            worker_ctx = futures[future]
+            _ = future.result()
 
-        if proc.returncode != rule.notErrorCode:
-            logging.error(f'rule "{rule.name}" exited with error code {proc.returncode}')
-        elif proc.stdout and len(proc.stdout) > 0:
-            file_name = f'{ctx.monitor_location}/{rule.file_name}.json'
-            with open(file_name, 'w') as f:
-                f.write(proc.stdout)
-
-        logging.info(f'Processing {rule.file_name} ... done')
+            logging.info(f'Received result from {worker_ctx.name}')
 
     return rc
 
