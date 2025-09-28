@@ -1,6 +1,9 @@
 # dnf returns code 100 if updates are available
 
-if [ "$1" = "-v" ]
+if [ "$1" = "-u" ]
+then
+  distrobox enter fedora-python-dx -- sudo dnf update 1>&2
+elif [ "$1" = "-v" ]
 then
   distrobox enter fedora-python-dx -- sudo dnf check-upgrade 1>&2
 else

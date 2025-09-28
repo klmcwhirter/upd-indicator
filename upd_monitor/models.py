@@ -118,3 +118,15 @@ class AppContext:
     @staticmethod
     def from_args(args: argparse.Namespace) -> AppContext:  # noqa F821
         return AppContext(args=args)
+
+
+@dataclass
+class WorkerContext:
+    idx: int
+    rule: MonitorRule
+    dir: str
+
+    @property
+    def name(self) -> str:
+        rc = f'Worker-{self.idx:02}'
+        return rc

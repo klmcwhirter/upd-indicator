@@ -312,7 +312,6 @@ pyrightconfig.json
 
 # End of https://www.toptal.com/developers/gitignore/api/node,python
 
-upd-indicator@for-many.shell-extension.zip
+!.env
 gschemas.compiled
-.pdm-python
-
+upd-indicator@for-many.shell-extension.zip

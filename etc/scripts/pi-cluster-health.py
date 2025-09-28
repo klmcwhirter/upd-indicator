@@ -4,9 +4,51 @@
 pi-cluster-health.py
 '''
 
-import os
+import concurrent.futures
+import multiprocessing as mp
 import subprocess
 import sys
+from dataclasses import dataclass
+
+
+@dataclass
+class WorkerContext:
+    idx: int
+    host: str
+    cmd: str
+    msg: str
+    verbose: bool
+
+    @property
+    def name(self) -> str:
+        rc = f'Worker-{self.idx:02}'
+        return rc
+
+
+def process_host(ctx: WorkerContext) -> str:
+    if ctx.verbose:
+        print(f'{ctx.name}: Executing: {ctx.cmd}', flush=True)
+
+    result = ''
+
+    proc = subprocess.run(
+        ctx.cmd,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+        shell=True,
+        encoding='utf-8',
+        text=True,
+    )
+
+    if proc.returncode != 0:
+        if ctx.verbose:
+            print(f'{ctx.name}: cmd exited with {proc.returncode=}', flush=True)
+        result = f'{{ "name": "{ctx.host}", "status": "{ctx.msg}" }}'
+
+    if ctx.verbose:
+        print(proc.stdout, flush=True)
+
+    return result
 
 
 def pi_cluster_health(*, hosts: list[str], cmd: str, msg: str, verbose=False) -> str:
@@ -24,28 +66,23 @@ def pi_cluster_health(*, hosts: list[str], cmd: str, msg: str, verbose=False) ->
     rc = ''
     lines: list[str] = []
 
-    for host in hosts:
-        full_cmd = f'ssh {host} {cmd}'
+    _worker_contexts = [
+        WorkerContext(idx=idx, host=host, cmd=f'ssh {host} {cmd}', msg=msg, verbose=verbose)
+        for idx, host in enumerate(hosts)
+    ]
 
-        if verbose:
-            print(f'Executing: {full_cmd}', flush=True)
+    with concurrent.futures.ProcessPoolExecutor() as executor:
+        futures = {
+            executor.submit(process_host, ctx=worker_ctx): worker_ctx
+            for worker_ctx in _worker_contexts
+        }
 
-        proc = subprocess.run(
-            full_cmd,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.STDOUT,
-            shell=True,
-            encoding='utf-8',
-            text=True,
-        )
+        for future in concurrent.futures.as_completed(futures):
+            # worker_ctx = futures[future]
+            result = future.result()
 
-        if proc.returncode != 0:
-            if verbose:
-                print(f'cmd exited with {proc.returncode=}', flush=True)
-            lines.append(f'{{ "name": "{host}", "status": "{msg}" }}')
-
-        if verbose:
-            print(proc.stdout, flush=True)
+            if result and len(result) > 0:
+                lines.append(result)
 
     if not verbose and len(lines) > 0:
         rc = f'[{",".join(lines)}]'
@@ -54,6 +91,8 @@ def pi_cluster_health(*, hosts: list[str], cmd: str, msg: str, verbose=False) ->
 
 
 def main(*, verbose=False) -> None:
+    mp.set_start_method('spawn')
+
     hosts = ['pi2.lan', 'pi3.lan']
 
     out = pi_cluster_health(hosts=hosts, cmd='sudo /home/klmcw/.local/bin/check-4-upds.sh', msg='Needs Attention', verbose=verbose)
@@ -73,5 +112,5 @@ if __name__ == '__main__':
     try:
         rc = main(verbose=verbose)
     except Exception as e:
-        print(e, file=os.stderr, flush=True)
+        print(e, file=sys.stderr, flush=True)
         sys.exit(2)

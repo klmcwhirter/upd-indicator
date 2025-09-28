@@ -16,13 +16,13 @@ scripts:
   - name: gitignore
     is-local: false
     options:
-      features: python
-      addons: distrobox-export,.pdm-python
+      features: node,python
+      addons: "!.env,gschemas.compiled,upd-indicator@for-many.shell-extension.zip"
 
   - name: start
     desc: app entrypoint
     use-python: false
-    cmd: uv run python -m ocisictl
+    cmd: uv run python -m upd_monitor
     is-local: true
 
   - name: install
