@@ -2,7 +2,7 @@
 
 if [ "$1" = "-u" ]
 then
-  distrobox enter fedora-python-dx -- sudo dnf update 1>&2
+  distrobox enter fedora-python-dx -- sudo dnf update -y 1>&2
 elif [ "$1" = "-v" ]
 then
   distrobox enter fedora-python-dx -- sudo dnf check-upgrade 1>&2
