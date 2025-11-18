@@ -1,6 +1,9 @@
 [Unit]
 Description=Monitor upd-indicator rules for updates
 After=gnome-session.target
+BindsTo=gnome-session.target
+After=network-online.target
+Wants=network-online.target
 
 [Service]
 ExecStart=~UPD_MONITOR_HOME~/upd_monitor.sh process -v

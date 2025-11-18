@@ -13,6 +13,7 @@ INCLUDE_UNITS=""
 
 [ "$1" = "--ext-only" ] && EXT_ONLY="1"
 [ "$1" = "--pgm-only" ] && PGM_ONLY="1"
+[ "$1" = "--units-only" ] && UNITS_ONLY="1"
 
 UPD_MONITOR_HOME=$HOME/.local/share/upd-monitor
 
@@ -115,6 +116,9 @@ then
 elif [ "${PGM_ONLY}" = "1" ]
 then
   echo_eval install_pgm
+elif [ "${UNITS_ONLY}" = "1" ]
+then
+  echo_eval install_units
 else
   echo_eval install_ext
 

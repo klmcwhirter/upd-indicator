@@ -42,3 +42,9 @@ scripts:
     use-python: false
     cmd: ./local-install.sh --pgm-only
     is-local: true
+
+  - name: install-units
+    desc: install systemd units
+    use-python: false
+    cmd: ./local-install.sh --units-only
+    is-local: true
