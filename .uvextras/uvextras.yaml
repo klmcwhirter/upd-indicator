@@ -9,7 +9,8 @@ scripts:
     is-local: false
     env:
       UV_MANAGED_PYTHON: 0
-      UV_PYTHON: /var/home/klmcw/opt/cpython/bin/python3.14
+      UV_PYTHON: /usr/bin/python3.14
+    #   UV_PYTHON: /var/home/klmcw/opt/cpython/bin/python3.14
     options:
       with-system:
 
@@ -17,7 +18,7 @@ scripts:
     is-local: false
     options:
       features: node,python
-      addons: "!.env,gschemas.compiled,upd-indicator@for-many.shell-extension.zip"
+      addons: "gschemas.compiled,upd-indicator@for-many.shell-extension.zip"
 
   - name: start
     desc: app entrypoint

@@ -4,7 +4,7 @@
   "uuid": "upd-indicator@for-many",
   "settings-schema": "org.gnome.shell.extensions.upd-indicator",
   "shell-version": [
-    "48"
+    "49"
   ],
   "url": "https://github.com/klmcwhirter/upd-indicator",
   "version": "1",

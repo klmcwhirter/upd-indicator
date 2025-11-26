@@ -17,4 +17,4 @@ export PATH=${PWD}/etc/scripts:$PATH
 
 export PATH=$HOME/opt/cpython/bin:$PATH
 
-GSETTINGS_SCHEMA_DIR=$HOME/.local/share/gnome-shell/extensions/upd-indicator@for-many/schemas python3.14 -m upd_monitor $@
+GSETTINGS_SCHEMA_DIR=$HOME/.local/share/gnome-shell/extensions/upd-indicator@for-many/schemas python3.14-opt -m upd_monitor $@
