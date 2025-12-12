@@ -12,7 +12,7 @@ unhealth_msgs = []
 
 
 def add_unhealthy_msg(key: str, msg: str) -> None:
-    hmsg = json.dumps({key: msg})
+    hmsg = json.dumps({"name": key, "status": msg})
     unhealth_msgs.append(hmsg)
 
 

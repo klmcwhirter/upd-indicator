@@ -30,7 +30,9 @@ The monitor program reads the rules settings and executes the CLI commands to ca
 
 ### IDE
 
-I will support VS Code with a defined Dev Container. This uses some custom install scripts to be sure all needed tools are available. _I have pnpm installed locally. We should not assume that will always be the case._
+I use VS Code with a defined Dev Container. This uses some custom install scripts to be sure all needed tools are available. _I have pnpm installed locally. You should not assume that is true in your case._
+
+_See https://github.com/klmcwhirter/oci-shared-images for how the [devcontainer](../.devcontainer/devcontainer.json) base image is constructed._
 
 ### Delivery
 
@@ -50,6 +52,7 @@ For actual schema, see [schemas/org.gnome.shell.extensions.upd-indicator.gschema
 
 
 Phase 2 context:
+_See [settings.js](../upd-indicator@for-many/common-lib/settings.js)._
 
 ```
 const ctx = {
@@ -139,7 +142,8 @@ _See [example scripts](../examples/phase1-demo/README.md#scripts)._
 
 ### Class That Receives the Output
 
-The class that receives the JSON object looks like this:
+The Javascript class that receives the JSON object looks like this:
+_See [`update-item.js`](../upd-indicator@for-many/common-lib/update-item.js)_
 
 ```
 export class UpdateItem {

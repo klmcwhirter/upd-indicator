@@ -11,7 +11,7 @@ GNOME extension that provides indication that updates are available
 
 ## Background
 
-Some indication of when various updates need our attention would be useful. And not just for OS updates, but various maintenance activities whether related to the local system or not.
+Some indication of when various updates need my attention would be useful. And not just for OS updates, but various maintenance activities whether related to the local system or not.
 
 If a command line can be crafted to provide an indication of when an update is available, that should be all that is needed - right?
 
@@ -43,19 +43,6 @@ GNOME extensions are written with GJS - where GJS ironically stands for [JavaScr
 
 _Also see [docs/](./docs/README.md) for details._
 
-## Status
-
-- 2025-05-29 I have just created this repo and put up a call to action at [Bluefin - flexible update indicator project](https://universal-blue.discourse.group/t/bluefin-flexible-update-indicator-project/8844).
-- 2025-05-30 Got a rough draft of the status bar UI completed and captured a demo amimated gif. See above.
-- 2025-06-05 The summary display is working; although notification is _possible_ it is not clear how to do that. It is disabled for now.
-- 2025-06-06 Added devcontainer definition - cannot perform `pnpm run nested` in the devcontainer - run it on the host instead !
-- 2025-06-07 Added pollingRuleAdapter, CompositeRuleAdapter class and demos - completed phase 1 ! Started phase 2 design
-- 2025-06-12 Added upd_indicator Python program to monitor CLI commands and place json files in `monitor-location`; revised `upd-indicator` extension to poll that dir for `json` files. _See [#22](https://github.com/klmcwhirter/upd-indicator/issues/22)_
-- 2025-06-13 Renamed upd_indicator to upd_monitor; added reference systemd units to orchestrate its invocation
-- 2025-06-15 Enhanced local install feature; added settings import from [`settings.json`](./examples/settings.json) file; change settings schema to store path to the installed [`rules.json`](./examples/rules.json)
-- 2025-06-21 Added exec verb to upd_monitor to allow executing a rule
-- 2025-06-22 Added phase 2 demo - phase 2 is complete; upd-indicator is now in maintenance mode
-
 ## Demos / Examples
 
 |Link|Description|
@@ -75,3 +62,5 @@ _Also see [docs/](./docs/README.md) for details._
 - https://gjs.guide/guides/gjs/asynchronous-programming.html
 - https://gjs-docs.gnome.org/
 - https://pygobject.gnome.org/getting_started.html#fedora-logo-fedora
+- https://github.com/klmcwhirter/oci-shared-images
+- https://github.com/klmcwhirter/uvextras

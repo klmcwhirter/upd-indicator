@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 #*----------------------------------------------------------------------------*
 #* Name: local-install.sh
 #*
@@ -107,6 +107,8 @@ function install_pgm
   ./upd_monitor.sh import -j ${UPD_MONITOR_HOME}/settings.json -v
 }
 #*----------------------------------------------------------------------------*
+
+[ -f .env ] && source .env
 
 if [ "${EXT_ONLY}" = "1" ]
 then
