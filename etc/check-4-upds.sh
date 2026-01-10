@@ -14,7 +14,7 @@ fi
 apt-get update -qy >/dev/null
 
 if [ "$1" = "-v" ]; then
-  apt list --upgradeable -a
+  apt list --upgradeable
 fi
 
 # ----------------- this spelling diff is intentional -----v
