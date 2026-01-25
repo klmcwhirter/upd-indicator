@@ -8,7 +8,11 @@ import concurrent.futures
 import multiprocessing as mp
 import subprocess
 import sys
+import time
 from dataclasses import dataclass
+from functools import wraps
+
+NUM_TRIES = 5
 
 
 @dataclass
@@ -29,6 +33,73 @@ def prefixed_lines(prefix: str, lines: list[str]) -> str:
     return f'\n----------\n{prefix}\n----------\n{''.join(lines)}'
 
 
+class ProcessNonZeroRetcodeError(Exception):
+    def __init__(self, cmd: str, returncode: int) -> None:
+        super().__init__()
+        self.cmd = cmd
+        self.returncode = returncode
+
+    def __repr__(self) -> str:
+        return f'ProcessNonZeroRetcodeError(cmd={self.cmd}, returncode={self.returncode})'
+
+
+def retry(ExceptionToCheck, tries=NUM_TRIES, delay=3, backoff=2):
+    '''Retry calling the decorated function using an exponential backoff.
+
+    http://www.saltycrane.com/blog/2009/11/trying-out-retry-decorator-python/
+    original from: http://wiki.python.org/moin/PythonDecoratorLibrary#Retry
+
+    :param ExceptionToCheck: the exception to check. may be a tuple of exceptions to check
+    :type ExceptionToCheck: Exception or tuple
+    :param tries: number of times to try (not retry) before giving up
+    :type tries: int
+    :param delay: initial delay between retries in seconds
+    :type delay: int
+    :param backoff: backoff multiplier e.g. value of 2 will double the delay each retry
+    :type backoff: int
+    :param logger: logger to use. If None, print
+    :type logger: logging.Logger instance
+    '''
+    def deco_retry(f):
+
+        @wraps(f)
+        def f_retry(*args, **kwargs):
+            mtries, mdelay = tries, delay
+            while mtries > 1:
+                try:
+                    return f(*args, **kwargs)
+                except ExceptionToCheck:
+                    print(f'{ExceptionToCheck}, Retrying in {mdelay} seconds...', file=sys.stderr, flush=True)
+                    time.sleep(mdelay)
+                    mtries -= 1
+                    mdelay *= backoff
+            return f(*args, **kwargs)
+
+        return f_retry  # true decorator
+
+    return deco_retry
+
+
+@retry(ProcessNonZeroRetcodeError)
+def run_with_retry(cmd: str, verbose=False) -> subprocess.CompletedProcess[str]:
+    if verbose:
+        print(cmd, file=sys.stderr, flush=True)
+
+    proc = subprocess.run(
+        cmd,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+        shell=True,
+        encoding='utf-8',
+        text=True,
+    )
+
+    if proc.returncode > 1:  # check was not successful
+        raise ProcessNonZeroRetcodeError(cmd=cmd, returncode=proc.returncode)
+
+    return proc
+
+
 def process_host(ctx: WorkerContext) -> tuple[list[str], list[str]]:
     out: list[str] = []
     err: list[str] = []
@@ -36,14 +107,7 @@ def process_host(ctx: WorkerContext) -> tuple[list[str], list[str]]:
     if ctx.verbose:
         err.append(f'{ctx.name}: Executing: {ctx.cmd}\n')
 
-    proc = subprocess.run(
-        ctx.cmd,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.STDOUT,
-        shell=True,
-        encoding='utf-8',
-        text=True,
-    )
+    proc = run_with_retry(ctx.cmd, verbose=ctx.verbose)
 
     if proc.returncode != 0:
         if ctx.verbose:

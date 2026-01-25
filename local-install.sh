@@ -70,7 +70,7 @@ function install_units
     echo "install ${service}"
     cat etc/${service}.in | sed "s?~UPD_MONITOR_HOME~?${UPD_MONITOR_HOME}?g" >${cfg_dir}/${service}
 
-    echo_eval install etc/${timer} ${cfg_dir}
+    echo_eval install -m 0644 etc/${timer} ${cfg_dir}
 
     echo_eval systemctl --user enable ${timer}
     echo_eval systemctl --user start ${timer}

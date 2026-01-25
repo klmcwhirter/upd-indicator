@@ -1,6 +1,5 @@
 #!/usr/bin/env -S python
 
-import json
 import subprocess
 
 HOSTS = [
@@ -12,8 +11,7 @@ unhealth_msgs = []
 
 
 def add_unhealthy_msg(key: str, msg: str) -> None:
-    hmsg = json.dumps({"name": f'ssh {key}', "status": msg})
-    unhealth_msgs.append(hmsg)
+    unhealth_msgs.append({"name": f'ssh {key}', "status": msg})
 
 
 def run_with_output(cmd: str, verbose=False) -> subprocess.CompletedProcess[str]:
