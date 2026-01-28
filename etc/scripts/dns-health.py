@@ -1,17 +1,21 @@
 #!/usr/bin/env -S python
 
+import json
 import subprocess
 
 HOSTS = [
     'pi2.lan',
     'pi3.lan',
 ]
+RC = 0
 
-unhealth_msgs = []
+unhealth_msgs: list[dict[str, str]] = []
 
 
 def add_unhealthy_msg(key: str, msg: str) -> None:
-    unhealth_msgs.append({"name": f'ssh {key}', "status": msg})
+    global RC
+    unhealth_msgs.append({"name": f"ssh {key}", "status": msg})
+    RC = 5  # EIO asm-generic/errno-base.h
 
 
 def run_with_output(cmd: str, verbose=False) -> subprocess.CompletedProcess[str]:
@@ -45,4 +49,6 @@ for host in HOSTS:
         continue
 
 if len(unhealth_msgs) > 0:
-    print(unhealth_msgs)
+    print(json.dumps(unhealth_msgs))
+
+exit(RC)
