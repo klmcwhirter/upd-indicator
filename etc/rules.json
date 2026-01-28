@@ -21,10 +21,10 @@
         "notErrorCode": 0
     },
     {
-        "name": "fedora-python-dx",
-        "description": "check if there are updates to fedora-python-dx",
+        "name": "fedora-dev-dx",
+        "description": "check if there are updates to $CURR_CONTAINER_NAME",
         "enabled": true,
-        "command": "fedora-python-dx-has-updates.sh",
+        "command": "fedora-dev-dx-has-updates.sh",
         "notErrorCode": 0
     },
     {
