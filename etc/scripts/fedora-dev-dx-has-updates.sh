@@ -16,7 +16,7 @@ rc=$?
 if [[ $rc == 100 ]]
 then
   rc=0
-  echo '[{ "name": "${CURR_CONTAINER_NAME}", "status": "has updates" }]' | jq -cM .
+  echo '[{ "name": "'${CURR_CONTAINER_NAME}'", "status": "has updates" }]' | jq -cM .
 fi
 
 exit $rc
